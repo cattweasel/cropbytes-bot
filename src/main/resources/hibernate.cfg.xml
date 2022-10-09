@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE hibernate-configuration PUBLIC  
+        "-//Hibernate/Hibernate Configuration DTD 5.3//EN"  
+        "http://www.hibernate.org/dtd/hibernate-configuration-5.3.dtd">
+<hibernate-configuration>
+	<session-factory>
+
+		<property name="hbm2ddl.auto">update</property>
+		<property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/cb_tools_bot</property>
+		<property name="connection.username">cb_tools_bot</property>
+		<property name="connection.password">cb_tools_bot</property>
+		<property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+
+		<mapping class="net.cattweasel.cropbytes.object.Asset" />
+		<mapping class="net.cattweasel.cropbytes.object.Currency" />
+		<mapping class="net.cattweasel.cropbytes.object.Extract" />
+		<mapping class="net.cattweasel.cropbytes.object.FiatQuote" />
+		<mapping class="net.cattweasel.cropbytes.object.MarketQuote" />
+		<mapping class="net.cattweasel.cropbytes.object.Requirement" />
+		
+		<mapping class="net.cattweasel.cropbytes.telegram.Alert" />
+		<mapping class="net.cattweasel.cropbytes.telegram.AuditEvent" />
+		<mapping class="net.cattweasel.cropbytes.telegram.BotCommand" />
+		<mapping class="net.cattweasel.cropbytes.telegram.Farm" />
+		<mapping class="net.cattweasel.cropbytes.telegram.FarmAsset" />
+		<mapping class="net.cattweasel.cropbytes.telegram.User" />
+		
+	</session-factory>
+</hibernate-configuration>
