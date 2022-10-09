@@ -28,7 +28,8 @@ public class HelpCommand implements BotCommandExecutor {
 				+ "/settings - manage your global bot settings\n"
 				+ "/help - displays the list of bot functions\n"
 				+ "\n"
-				+ "Support Chat: https://t.me/cropbytes_bot_support")
+				+ "Support Chat: https://t.me/cropbytes_bot_support\n"
+				+ "Source Code: https://github.com/cattweasel/cropbytes-bot")
 				.parseMode(ParseMode.HTML);
 		bot.execute(msg);
 	}

@@ -2,6 +2,7 @@ package net.cattweasel.cropbytes.tools;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import net.cattweasel.cropbytes.object.Asset;
 import net.cattweasel.cropbytes.object.Currency;
@@ -9,6 +10,8 @@ import net.cattweasel.cropbytes.object.Extract;
 import net.cattweasel.cropbytes.object.FiatQuote;
 import net.cattweasel.cropbytes.object.MarketQuote;
 import net.cattweasel.cropbytes.object.Requirement;
+import net.cattweasel.cropbytes.telegram.Farm;
+import net.cattweasel.cropbytes.telegram.FarmAsset;
 
 public class ProfitCalculator {
 
@@ -161,6 +164,16 @@ public class ProfitCalculator {
 			result += fruitPrice / 7D; // add 1/7 fruit feed
 		}
 		
+		return result;
+	}
+
+	public Double calculateBalance(Farm farm) throws GeneralException {
+		Double result = 0D;
+		Query<FarmAsset> query = session.createQuery("from FarmAsset where farm= :farm");
+		query.setParameter("farm", farm);
+		for (FarmAsset asset : query.list()) {
+			result += calculateProfit(asset.getTarget(), 168, asset.getSeeds()) * asset.getAmount();
+		}
 		return result;
 	}
 }

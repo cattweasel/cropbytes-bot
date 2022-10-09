@@ -21,8 +21,8 @@ import net.cattweasel.cropbytes.telegram.BotCommandExecutor;
 import net.cattweasel.cropbytes.telegram.Farm;
 import net.cattweasel.cropbytes.telegram.FarmAsset;
 import net.cattweasel.cropbytes.telegram.User;
-import net.cattweasel.cropbytes.tools.BalanceCalculator;
 import net.cattweasel.cropbytes.tools.GeneralException;
+import net.cattweasel.cropbytes.tools.ProfitCalculator;
 import net.cattweasel.cropbytes.tools.Util;
 
 public class FarmsCommand implements BotCommandExecutor {
@@ -36,7 +36,7 @@ public class FarmsCommand implements BotCommandExecutor {
 		if (farms.isEmpty()) {
 			sb.append("You currently have no farms defined!");
 		} else {
-			BalanceCalculator calc = new BalanceCalculator(session);
+			ProfitCalculator calc = new ProfitCalculator(session);
 			for (Farm farm : farms) {
 				sb.append("<b>" + createKeyboardName(session, farm) + "</b>\n");
 				try {

@@ -70,6 +70,8 @@ public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener 
 		usr.setFirstname(user.firstName());
 		usr.setLastname(user.lastName());
 		if (usr.isAdmin() == null) usr.setAdmin(false);
+		usr.setBroadcastDisabled(false);
+		usr.setSleepMode(false);
 		session.save(usr);
 		tx.commit();
 	}
