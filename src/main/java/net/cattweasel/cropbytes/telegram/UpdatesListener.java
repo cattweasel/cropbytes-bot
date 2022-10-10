@@ -44,6 +44,7 @@ public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener 
 					processCallbackQuery(session, update.callbackQuery());
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				LOG.error(ex);
 			} finally {
 				if (session != null) {
@@ -62,16 +63,18 @@ public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener 
 		Transaction tx = session.beginTransaction();
 		net.cattweasel.cropbytes.telegram.User usr = session.get(
 				net.cattweasel.cropbytes.telegram.User.class, user.id());
-		usr = usr == null ? new net.cattweasel.cropbytes.telegram.User() : usr;
-		usr.setLanguage(user.languageCode());
+		if (usr == null) {
+			usr = new net.cattweasel.cropbytes.telegram.User();
+			usr.setUserId(user.id());
+			usr.setAdmin(false);
+			usr.setBroadcastDisabled(false);
+			usr.setSleepMode(false);
+		}
+		if (user.languageCode() != null) usr.setLanguage(user.languageCode());
+		if (user.username() != null) usr.setUsername(user.username());
+		if (user.firstName() != null) usr.setFirstname(user.firstName());
+		if (user.lastName() != null) usr.setLastname(user.lastName());
 		usr.setLastSeen(new Date());
-		usr.setUserId(user.id());
-		usr.setUsername(user.username());
-		usr.setFirstname(user.firstName());
-		usr.setLastname(user.lastName());
-		if (usr.isAdmin() == null) usr.setAdmin(false);
-		usr.setBroadcastDisabled(false);
-		usr.setSleepMode(false);
 		session.save(usr);
 		tx.commit();
 	}
@@ -92,8 +95,6 @@ public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener 
 				} else {
 					bot.execute(new SendMessage(message.chat().id(), "Unrecognized command. Use /help to get a list of all commands."));
 				}
-			} else {
-				// TODO: might be a reply message to a command (see old code)
 			}
 		}
 	}
