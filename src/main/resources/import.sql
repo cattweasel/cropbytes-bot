@@ -198,5 +198,6 @@ insert into cb_tools_bot.tg_bot_command (command, executor, disabled, developmen
 insert into cb_tools_bot.tg_bot_command (command, executor, disabled, development, admin) values ('/farms', 'net.cattweasel.cropbytes.telegram.cmd.FarmsCommand', 0, 0, 0);
 insert into cb_tools_bot.tg_bot_command (command, executor, disabled, development, admin) values ('/broadcast', 'net.cattweasel.cropbytes.telegram.cmd.BroadcastCommand', 0, 0, 1);
 insert into cb_tools_bot.tg_bot_command (command, executor, disabled, development, admin) values ('/settings', 'net.cattweasel.cropbytes.telegram.cmd.SettingsCommand', 0, 0, 0);
+insert into cb_tools_bot.tg_bot_command (command, executor, disabled, development, admin) values ('/stats', 'net.cattweasel.cropbytes.telegram.cmd.StatsCommand', 0, 0, 0);
 
 insert into cb_tools_bot.tg_user (user_id, last_seen, username, admin, broadcast_disabled, sleep_mode) values (591508791, '01.01.2000', 'cattweasel', 1, 0, 0);

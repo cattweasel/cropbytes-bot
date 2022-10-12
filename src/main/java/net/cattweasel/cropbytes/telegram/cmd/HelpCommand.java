@@ -26,6 +26,7 @@ public class HelpCommand implements BotCommandExecutor {
 				+ "<b>Miscellaneous</b>\n"
 				+ "/alerts - manage your market price alerts\n"
 				+ "/settings - manage your global bot settings\n"
+				+ "/stats - displays current bot statistics\n"
 				+ "/help - displays the list of bot functions\n"
 				+ "\n"
 				+ "Support Chat: https://t.me/cropbytes_bot_support\n"
