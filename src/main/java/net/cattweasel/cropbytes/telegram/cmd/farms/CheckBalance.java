@@ -94,9 +94,9 @@ public class CheckBalance implements CallbackExecutor {
 			query.setParameter("farm", farm);
 			query.setParameter("assetType", assetType);
 			for (FarmAsset asset : query.list()) {
-				extracts += calc.calculateExtracts(asset.getTarget(), asset.getSeeds())
+				extracts += calc.calculateExtracts(asset.getTarget(), asset.getSeeds()) * asset.getAmount()
 						/ 24D * 168D; // TODO: REMOVE THIS LINE AND MAKE IT CONFIGURABLE
-				requirements += calc.calculateRequirements(asset.getTarget(), asset.getSeeds());
+				requirements += calc.calculateRequirements(asset.getTarget(), asset.getSeeds()) * asset.getAmount() / 24D * 168D;
 			}
 		}
 		sb.append(Util.formatNumber(requirements * -1D, 8) + "\t\t=\t\tTotal Requirements\n");

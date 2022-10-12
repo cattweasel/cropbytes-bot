@@ -134,9 +134,6 @@ insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (71,
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (72, 5.0, 'AT', 'WATER');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (73, 5.0, 'BT', 'WATER');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (74, 10.0, 'ORT', 'WATER');
-insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (75, 0.1, 'CAF', 'POW');
-insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (76, 0.01, 'COF', 'POW');
-insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (77, 0.015, 'FRF', 'POW');
 
 insert into cb_tools_bot.cb_extract (id, amount, origin, target) values (1, 3.0, 'BS', 'MILK');
 insert into cb_tools_bot.cb_extract (id, amount, origin, target) values (2, 1.0, 'GOATT', 'MILK');

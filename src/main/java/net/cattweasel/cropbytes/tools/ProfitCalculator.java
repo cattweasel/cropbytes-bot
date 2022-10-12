@@ -1,5 +1,7 @@
 package net.cattweasel.cropbytes.tools;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -20,11 +22,19 @@ public class ProfitCalculator {
 	private final Session session;
 	private final MarketDataProvider provider;
 	private final Currency cropBytesToken;
+	private final List<FiatQuote> fiatQuotes;
+	private final List<MarketQuote> marketQuotes;
 	
 	public ProfitCalculator(Session session) {
+		this(session, null, null);
+	}
+	
+	public ProfitCalculator(Session session, List<FiatQuote> fiatQuotes, List<MarketQuote> marketQuotes) {
 		this.session = session;
 		this.provider = new MarketDataProvider(session);
 		this.cropBytesToken = session.get(Currency.class, "CBX");
+		this.fiatQuotes = fiatQuotes;
+		this.marketQuotes = marketQuotes;
 	}
 	
 	public Double calculateProfit(Asset asset) throws GeneralException {
@@ -61,7 +71,7 @@ public class ProfitCalculator {
 		profit = profit / 24D * duration; // apply duration factor to the profit
 		LOG.debug(String.format("Resulting Profit: %s CBX [%s hrs]", profit, duration));
 		if (currency != null && currency.getCode() != cropBytesToken.getCode()) {
-			FiatQuote quote = provider.provideFiatQuote(cropBytesToken, currency);
+			FiatQuote quote = provideFiatQuote(cropBytesToken, currency);
 			profit = profit * quote.getPrice(); // convert to the desired currency
 			LOG.debug(String.format("Converting Profit from CBX to %s: %s %s [%s hrs]",
 					currency.getCode(), profit, currency.getCode(), duration));
@@ -69,7 +79,7 @@ public class ProfitCalculator {
 		LOG.debug(String.format("Resulting Profit: %s %s [%s hrs]", profit, currency.getCode(), duration));
 		return profit;
 	}
-	
+
 	public Double calculateRequirements(Asset asset) throws GeneralException {
 		return calculateRequirements(asset, null);
 	}
@@ -85,7 +95,7 @@ public class ProfitCalculator {
 		}
 		Double result = 0D;
 		for (Extract extract : asset.getExtracts()) {
-			MarketQuote quote = provider.provideMarketQuote(extract.getTarget(), cropBytesToken);
+			MarketQuote quote = provideMarketQuote(extract.getTarget(), cropBytesToken);
 			Double price = quote.getPrice() * extract.getAmount() / asset.getDuration() * 24D;
 			
 			// CROPLAND: Load price based on the given seed
@@ -103,17 +113,6 @@ public class ProfitCalculator {
 			}
 			result -= grindingFees;
 			
-			if (extract.getTarget().getRequirements() != null) {
-				for (Requirement requirement : extract.getTarget().getRequirements()) {
-					MarketQuote q = provider.provideMarketQuote(requirement.getTarget(), cropBytesToken);
-					Double grindingRequirements = extract.getAmount() * requirement.getAmount() * q.getPrice() / asset.getDuration() * 24D;
-					if (Asset.AssetType.CROPLAND == asset.getAssetType()) {
-						grindingRequirements = extract.getAmount() * requirement.getAmount() * q.getPrice() / seed.getDuration() * 24D;
-					}
-					result -= grindingRequirements; // remove grinding requirement fees (eg. power)
-				}
-			}
-			
 			// BUILDING: Nothing to do, plain extract price is fine
 			
 			// ANIMAL: Nothing to do, plain extract price is fine
@@ -122,7 +121,7 @@ public class ProfitCalculator {
 		}
 		return result;
 	}
-	
+
 	public Double calculateRequirements(Asset asset, Asset seed) throws GeneralException {
 		if (Asset.AssetType.CROPLAND == asset.getAssetType()
 				&& (seed == null || Asset.AssetType.SEED != seed.getAssetType())) {
@@ -130,7 +129,7 @@ public class ProfitCalculator {
 		}
 		Double result = 0D;
 		for (Requirement requirement : asset.getRequirements()) {
-			MarketQuote quote = provider.provideMarketQuote(requirement.getTarget(), cropBytesToken);
+			MarketQuote quote = provideMarketQuote(requirement.getTarget(), cropBytesToken);
 			Double price = quote.getPrice() * requirement.getAmount() / asset.getDuration() * 24D;
 			
 			// TREE: Nothing to do, plain requirement price is fine
@@ -152,16 +151,15 @@ public class ProfitCalculator {
 					price = price / 7D * 6D; // only 6/7 days normal feed
 				}
 			}
-			
 			result += price;
 		}
 		
 		// ANIMAL: Add 1/7 days fruit feed
 		if (Asset.AssetType.ANIMAL == asset.getAssetType()) {
 			Asset fruitFeed = session.get(Asset.class, "FRF");
-			MarketQuote quote = provider.provideMarketQuote(fruitFeed, cropBytesToken);
-			Double fruitPrice = quote.getPrice() / asset.getDuration() * 24D;
-			result += fruitPrice / 7D; // add 1/7 fruit feed
+			MarketQuote quote = provideMarketQuote(fruitFeed, cropBytesToken);
+			Double fruitPrice = quote.getPrice() / 7D;
+			result += fruitPrice; // add 1/7 fruit feed
 		}
 		
 		return result;
@@ -173,6 +171,45 @@ public class ProfitCalculator {
 		query.setParameter("farm", farm);
 		for (FarmAsset asset : query.list()) {
 			result += calculateProfit(asset.getTarget(), 168, asset.getSeeds()) * asset.getAmount();
+		}
+		return result;
+	}
+	
+	private FiatQuote provideFiatQuote(Currency currency1, Currency currency2) throws GeneralException {
+		FiatQuote result = null;
+		if (fiatQuotes != null) {
+			for (FiatQuote quote : fiatQuotes) {
+				if (quote.getBaseCurrency().getCode().equals(currency1.getCode())
+						&& quote.getTargetCurrency().getCode().equals(currency2.getCode())) {
+					result = quote;
+				}
+			}
+			if (result == null) {
+				throw new GeneralException("FiatQuote not found in pre-defined values: "
+						+ currency1.getCode() + "/" + currency2.getCode());
+			}
+		} else {
+			result = provider.provideFiatQuote(currency1, currency2);
+		}
+		return result;
+	}
+	
+	private MarketQuote provideMarketQuote(Asset asset, Currency currency) throws GeneralException {
+		MarketQuote result = null;
+		if (marketQuotes != null) {
+			for (MarketQuote quote : marketQuotes) {
+				if (quote.getAsset().getCode().equals(asset.getCode())
+						&& quote.getCurrency().getCode().equals(currency.getCode())) {
+					result = quote;
+					break;
+				}
+			}
+			if (result == null) {
+				throw new GeneralException("MarketQuote not found in pre-defined values: "
+						+ asset.getCode() + "/" + currency.getCode());
+			}
+		} else {
+			result = provider.provideMarketQuote(asset, currency);
 		}
 		return result;
 	}
