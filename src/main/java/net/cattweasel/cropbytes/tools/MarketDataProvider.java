@@ -8,14 +8,33 @@ import net.cattweasel.cropbytes.object.Currency;
 import net.cattweasel.cropbytes.object.FiatQuote;
 import net.cattweasel.cropbytes.object.MarketQuote;
 
+/**
+ * Utility class for providing market data (MarketQuotes and FiatQuotes).
+ * 
+ * @author cattweasel
+ *
+ */
 public class MarketDataProvider {
 	
 	private final Session session;
 	
+	/**
+	 * Setup a new MarketDataProvider with a given database session.
+	 * 
+	 * @param session The database session to be used
+	 */
 	public MarketDataProvider(Session session) {
 		this.session = session;
 	}
 	
+	/**
+	 * Provide a MarketQuote for a given asset / currency pair.
+	 * 
+	 * @param asset The asset of the pair
+	 * @param currency The currency of the pair
+	 * @return The resolved MarketQuote
+	 * @throws GeneralException If MarketQuote cannot be resolved
+	 */
 	@SuppressWarnings("unchecked")
 	public MarketQuote provideMarketQuote(Asset asset, Currency currency) throws GeneralException {
 		Query<MarketQuote> query = session.createQuery("from MarketQuote where asset= :asset and currency= :currency");
@@ -43,6 +62,14 @@ public class MarketDataProvider {
 		return quote;
 	}
 
+	/**
+	 * Provide a FiatQuote for a given currency pair.
+	 * 
+	 * @param baseCurrency The base currency of the pair
+	 * @param targetCurrency The target currency of the pair
+	 * @return The resolved FiatQuote
+	 * @throws GeneralException If the FiatQuote cannot be resolved
+	 */
 	@SuppressWarnings("unchecked")
 	public FiatQuote provideFiatQuote(Currency baseCurrency, Currency targetCurrency) throws GeneralException {
 		Query<FiatQuote> query = session.createQuery("from FiatQuote where baseCurrency= :baseCurrency and targetCurrency= :targetCurrency");

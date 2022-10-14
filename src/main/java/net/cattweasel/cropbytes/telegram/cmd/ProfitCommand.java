@@ -48,7 +48,7 @@ public class ProfitCommand implements BotCommandExecutor {
 		if (Asset.AssetType.CROPLAND == type) {
 			appendCroplandProfits(session, sb, currency);
 		} else {
-			if (!sb.isEmpty()) sb.append("\n");
+			if (sb.length() != 0) sb.append("\n");
 			sb.append(String.format("<b>%s ASSETS</b>%n", type));
 			ProfitCalculator calc = new ProfitCalculator(session);
 			Query<Asset> query = session.createQuery("from Asset where assetType= :assetType and proAsset= :proAsset and trialAsset= :trialAsset");
@@ -75,7 +75,7 @@ public class ProfitCommand implements BotCommandExecutor {
 		query.setParameter("assetType", Asset.AssetType.SEED);
 		for (Asset seed : query.list()) {
 			Map<Asset, Double> profits = new HashMap<Asset, Double>();
-			if (!sb.isEmpty()) sb.append("\n");
+			if (sb.length() != 0) sb.append("\n");
 			sb.append(String.format("<b>CROPLAND ASSETS (%s)</b>%n", seed.getName()));
 			Query<Asset> q = session.createQuery("from Asset where assetType= :assetType");
 			q.setParameter("assetType", Asset.AssetType.CROPLAND);

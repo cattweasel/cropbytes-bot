@@ -14,6 +14,12 @@ import net.cattweasel.cropbytes.object.Requirement;
 import net.cattweasel.cropbytes.telegram.Farm;
 import net.cattweasel.cropbytes.telegram.FarmAsset;
 
+/**
+ * Utility class for several kinds of profit calculations.
+ * 
+ * @author cattweasel
+ *
+ */
 public class ProfitCalculator {
 
 	private static final Logger LOG = Logger.getLogger(ProfitCalculator.class);
@@ -24,10 +30,22 @@ public class ProfitCalculator {
 	private final List<FiatQuote> fiatQuotes;
 	private final List<MarketQuote> marketQuotes;
 	
+	/**
+	 * Create a new calculator instance with a given database session.
+	 * 
+	 * @param session The database session to be used
+	 */
 	public ProfitCalculator(Session session) {
 		this(session, null, null);
 	}
 	
+	/**
+	 * Create a new calculator instance with pre-defined market values (for testing).
+	 * 
+	 * @param session The database session to be used
+	 * @param fiatQuotes The FiatQuotes to be used
+	 * @param marketQuotes The MarketQuotes to be used
+	 */
 	public ProfitCalculator(Session session, List<FiatQuote> fiatQuotes, List<MarketQuote> marketQuotes) {
 		this.session = session;
 		this.provider = new MarketDataProvider(session);
@@ -36,26 +54,77 @@ public class ProfitCalculator {
 		this.marketQuotes = marketQuotes;
 	}
 	
+	/**
+	 * Calculate the profitability for a single asset (non-cropland).
+	 * 
+	 * @param asset The asset to be calculated
+	 * @return The profitability of the given asset
+	 * @throws GeneralException If the profitability cannot be calculated
+	 */
 	public Double calculateProfit(Asset asset) throws GeneralException {
 		return calculateProfit(asset, 168); // default: 1 week
 	}
 	
+	/**
+	 * Calculate the profitability for a single cropland asset.
+	 * 
+	 * @param asset The asset to be calculated
+	 * @param seed The seed to be used
+	 * @return The profitability of the given asset
+	 * @throws GeneralException If the profitability cannot be calculated
+	 */
 	public Double calculateProfit(Asset asset, Asset seed) throws GeneralException {
-		return calculateProfit(asset, 168, seed, cropBytesToken);
+		return calculateProfit(asset, 168, seed, cropBytesToken); // default: 1 week, CBX
 	}
 	
+	/**
+	 * Calculate the profitability for a single asset and a given duration.
+	 * 
+	 * @param asset The asset to be calculated
+	 * @param duration The duration (hours) to be applied for calculation
+	 * @return The profitability of the given asset
+	 * @throws GeneralException If the profitability cannot be calculated
+	 */
 	public Double calculateProfit(Asset asset, Integer duration) throws GeneralException {
-		return calculateProfit(asset, duration, cropBytesToken);
+		return calculateProfit(asset, duration, cropBytesToken); // default: CBX
 	}
 	
+	/**
+	 * Calculate the profitability for a single asset and a given duration (non-cropland).
+	 * 
+	 * @param asset The asset to be calculated
+	 * @param duration The duration (hours) to be applied for calculation
+	 * @param currency The currency to be used for output
+	 * @return The profitability of the given asset
+	 * @throws GeneralException If the profitability cannot be calculated
+	 */
 	public Double calculateProfit(Asset asset, Integer duration, Currency currency) throws GeneralException {
 		return calculateProfit(asset, duration, null, currency);
 	}
 	
+	/**
+	 * Calculate the profitability for a single cropland asset and a given duration.
+	 * 
+	 * @param asset The asset to be calculated
+	 * @param duration The duration (hours) to be applied for calculation
+	 * @param seed The seed to be used
+	 * @return The profitability of the given asset
+	 * @throws GeneralException If the profitability cannot be calculated
+	 */
 	public Double calculateProfit(Asset asset, Integer duration, Asset seed) throws GeneralException {
-		return calculateProfit(asset, duration, seed, cropBytesToken);
+		return calculateProfit(asset, duration, seed, cropBytesToken); // default: CBX
 	}
 	
+	/**
+	 * Calculate the profitability for a single asset, a given duration and a given currency.
+	 * 
+	 * @param asset The asset to be calculated
+	 * @param duration The duration (hours) to be applied for calculation
+	 * @param seed The seed to be used (if asset is cropland)
+	 * @param currency The currency to be used for output
+	 * @return The profitability of the given asset
+	 * @throws GeneralException If the profitability cannot be calculated
+	 */
 	public Double calculateProfit(Asset asset, Integer duration, Asset seed, Currency currency) throws GeneralException {
 		LOG.debug(String.format("Calculating Profit for %s [%s] (Duration: %s hrs, Asset Duration: %s hrs)",
 				asset.getCode(), asset.getName(), duration, asset.getDuration()));
@@ -69,6 +138,7 @@ public class ProfitCalculator {
 		// profit has to be provided on 24hrs basis here
 		if (Asset.AssetType.ANIMAL != asset.getAssetType()) {
 			profit = profit / 24D * duration; // apply duration factor to the profit
+			// but only if it is no animal. animals like BR and MUD take longer than 24 hours!
 		}
 		LOG.debug(String.format("Resulting Profit: %s CBX [%s hrs]", profit, duration));
 		if (currency != null && !currency.getCode().equals(cropBytesToken.getCode())) {
@@ -80,14 +150,36 @@ public class ProfitCalculator {
 		return profit;
 	}
 
+	/**
+	 * Calculate the requirements for a single asset (24 hours).
+	 * 
+	 * @param asset The asset to be calculated
+	 * @return The costs for all requirements (24 hours)
+	 * @throws GeneralException If requirements cannot be calculated
+	 */
 	public Double calculateRequirements(Asset asset) throws GeneralException {
 		return calculateRequirements(asset, null);
 	}
 	
+	/**
+	 * Calculate the extracts for a single asset (24 hours).
+	 * 
+	 * @param asset The asset to be calculated
+	 * @return The costs for all extracts (24 hours)
+	 * @throws GeneralException If extracts cannot be calculated
+	 */
 	public Double calculateExtracts(Asset asset) throws GeneralException {
 		return calculateExtracts(asset, null);
 	}
 	
+	/**
+	 * Calculate the extracts for a single asset (24 hours).
+	 * 
+	 * @param asset The asset to be calculated
+	 * @param seed The seed to be used (if asset is cropland)
+	 * @return The costs for all extracts (24 hours)
+	 * @throws GeneralException If extracts cannot be calculated
+	 */
 	public Double calculateExtracts(Asset asset, Asset seed) throws GeneralException {
 		if (Asset.AssetType.CROPLAND == asset.getAssetType()
 				&& (seed == null || Asset.AssetType.SEED != seed.getAssetType())) {
@@ -122,6 +214,14 @@ public class ProfitCalculator {
 		return result;
 	}
 
+	/**
+	 * Calculate the requirements for a single asset (24 hours).
+	 * 
+	 * @param asset The asset to be calculated
+	 * @param seed The seed to be used (if asset is cropland)
+	 * @return The costs for all requirements (24 hours)
+	 * @throws GeneralException If the requirements cannot be calculated
+	 */
 	public Double calculateRequirements(Asset asset, Asset seed) throws GeneralException {
 		if (Asset.AssetType.CROPLAND == asset.getAssetType()
 				&& (seed == null || Asset.AssetType.SEED != seed.getAssetType())) {
@@ -166,6 +266,13 @@ public class ProfitCalculator {
 		return result;
 	}
 
+	/**
+	 * Check the balance of a given farm. All profits will be aggregated.
+	 * 
+	 * @param farm The farm to be checked
+	 * @return The balance of the farm
+	 * @throws GeneralException If the balance cannot be calculated
+	 */
 	public Double calculateBalance(Farm farm) throws GeneralException {
 		Double result = 0D;
 		for (FarmAsset asset : farm.getFarmAssets()) {
@@ -174,6 +281,14 @@ public class ProfitCalculator {
 		return result;
 	}
 	
+	/**
+	 * Private helper method to provide the correct FiatQuotes (test vs real world).
+	 * 
+	 * @param currency1 The base currency of the quote
+	 * @param currency2 The target currency of the quote
+	 * @return The resolved FiatQuote
+	 * @throws GeneralException If the FiatQuote cannot be resolved
+	 */
 	private FiatQuote provideFiatQuote(Currency currency1, Currency currency2) throws GeneralException {
 		FiatQuote result = null;
 		if (fiatQuotes != null) {
@@ -193,6 +308,14 @@ public class ProfitCalculator {
 		return result;
 	}
 	
+	/**
+	 * Private helper method to provide the correct MarketQuotes (test vs real world).
+	 * 
+	 * @param asset The asset of the quote
+	 * @param currency The currency of the quote
+	 * @return The resolved MarketQuote
+	 * @throws GeneralException If the MarketQuote cannot be resolved
+	 */
 	private MarketQuote provideMarketQuote(Asset asset, Currency currency) throws GeneralException {
 		MarketQuote result = null;
 		if (marketQuotes != null) {
