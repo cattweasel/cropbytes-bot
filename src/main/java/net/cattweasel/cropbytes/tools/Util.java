@@ -14,9 +14,10 @@ public class Util {
 		while (str.length() > length) {
 			str = str.substring(0, str.length() - 1);
 		}
-		while (str.length() < length) {
-			str = str + "0";
+		StringBuilder sb = new StringBuilder(str);
+		while (sb.length() < length) {
+			sb.append("0");
 		}
-		return str;
+		return sb.toString();
 	}
 }

@@ -46,7 +46,7 @@ public class FarmsCommand implements BotCommandExecutor {
 					q.setParameter("baseCurrency", session.get(Currency.class, "CBX"));
 					q.setParameter("targetCurrency", session.get(Currency.class, "USDT"));
 					FiatQuote quote = q.uniqueResult();
-					sb.append("Balance (USDT):\t\t" + Util.formatNumber((balance * quote.getPrice()), 6, true) + " / Week\n");
+					sb.append("Balance (USDT):\t\t" + Util.formatNumber(balance * quote.getPrice(), 6, true) + " / Week\n");
 				} catch (GeneralException ex) {
 					LOG.error(ex);
 				}

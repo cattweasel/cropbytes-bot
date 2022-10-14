@@ -66,8 +66,8 @@ public class AlertNotificationTask extends Thread {
 				String data = "CBX/" + currency.getCode();
 				if (shouldBeSent(session, alert, data)) {
 					SendMessage message = new SendMessage(alert.getUser().getUserId(), String.format(
-							"<b>CBX / %s</b> is currently at <b>%s%%</b>\n"
-									+ "https://www.cropbytes.com/exchange/cbx%s\n"
+							"<b>CBX / %s</b> is currently at <b>%s%%</b>%n"
+									+ "https://www.cropbytes.com/exchange/cbx%s%n"
 									+ "<i>Note: You can manage these notifications with the /alerts command</i>",
 							currency.getCode(), Util.formatNumber(quote.getPriceChange(), 6, true), currency.getCode().toLowerCase()))
 							.parseMode(ParseMode.HTML);
@@ -83,8 +83,8 @@ public class AlertNotificationTask extends Thread {
 				String data = asset.getCode() + "/CBX";
 				if (shouldBeSent(session, alert, data)) {
 					SendMessage message = new SendMessage(alert.getUser().getUserId(), String.format(
-							"<b>%s</b> (%s) is currently at <b>%s%%</b>\n"
-									+ "https://www.cropbytes.com/exchange/%scbx\n"
+							"<b>%s</b> (%s) is currently at <b>%s%%</b>%n"
+									+ "https://www.cropbytes.com/exchange/%scbx%n"
 									+ "<i>Note: You can manage these notifications with the /alerts command</i>",
 							asset.getCode(), asset.getName(), Util.formatNumber(quote.getPriceChange(), 6, true),
 							asset.getCode().toLowerCase())).parseMode(ParseMode.HTML);

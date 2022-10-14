@@ -71,13 +71,12 @@ public class ProfitCalculator {
 			profit = profit / 24D * duration; // apply duration factor to the profit
 		}
 		LOG.debug(String.format("Resulting Profit: %s CBX [%s hrs]", profit, duration));
-		if (currency != null && currency.getCode() != cropBytesToken.getCode()) {
+		if (currency != null && !currency.getCode().equals(cropBytesToken.getCode())) {
 			FiatQuote quote = provideFiatQuote(cropBytesToken, currency);
 			profit = profit * quote.getPrice(); // convert to the desired currency
 			LOG.debug(String.format("Converting Profit from CBX to %s: %s %s [%s hrs]",
 					currency.getCode(), profit, currency.getCode(), duration));
 		}
-		LOG.debug(String.format("Resulting Profit: %s %s [%s hrs]", profit, currency.getCode(), duration));
 		return profit;
 	}
 

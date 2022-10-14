@@ -29,20 +29,20 @@ public class PacksCommand implements BotCommandExecutor {
 			sb.append(Util.formatNumber(20D, 6, false) + "\t\t=\t\tTotal Investment (USDT)\n");
 			profit = calculateProfit(session, session.get(Asset.class, "SCL"), session.get(Asset.class, "DS"), session.get(Asset.class, "DS"));
 			sb.append(Util.formatNumber(profit, 6, false) + "\t\t=\t\tDaily Profitability (USDT)\n");
-			sb.append(Util.formatNumber((20D / profit), 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
+			sb.append(Util.formatNumber(20D / profit, 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
 			
 			sb.append("<b>MEDIUM STARTER PACK</b>\n");
 			sb.append(Util.formatNumber(35D, 6, false) + "\t\t=\t\tTotal Investment (USDT)\n");
 			profit = calculateProfit(session, session.get(Asset.class, "SCL"), session.get(Asset.class, "AT"), session.get(Asset.class, "DS"), session.get(Asset.class, "RR"));
 			sb.append(Util.formatNumber(profit, 6, false) + "\t\t=\t\tDaily Profitability (USDT)\n");
-			sb.append(Util.formatNumber((35D / profit), 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
+			sb.append(Util.formatNumber(35D / profit, 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
 			
 			sb.append("<b>LARGE STARTER PACK</b>\n");
 			sb.append(Util.formatNumber(50D, 6, false) + "\t\t=\t\tTotal Investment (USDT)\n");
 			profit = calculateProfit(session, session.get(Asset.class, "SCL"), session.get(Asset.class, "AT"), session.get(Asset.class, "SW"),
 					session.get(Asset.class, "DS"), session.get(Asset.class, "RR"), session.get(Asset.class, "MG"));
 			sb.append(Util.formatNumber(profit, 6, false) + "\t\t=\t\tDaily Profitability (USDT)\n");
-			sb.append(Util.formatNumber((50D / profit), 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
+			sb.append(Util.formatNumber(50D / profit, 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
 			
 			sb.append("<b>ALL PACKS TOGETHER</b>\n");
 			sb.append(Util.formatNumber(105D, 6, false) + "\t\t=\t\tTotal Investment (USDT)\n");
@@ -51,7 +51,7 @@ public class PacksCommand implements BotCommandExecutor {
 					session.get(Asset.class, "SCL"), session.get(Asset.class, "AT"), session.get(Asset.class, "SW"),
 					session.get(Asset.class, "DS"), session.get(Asset.class, "RR"), session.get(Asset.class, "MG"));
 			sb.append(Util.formatNumber(profit, 6, false) + "\t\t=\t\tDaily Profitability (USDT)\n");
-			sb.append(Util.formatNumber((105D / profit), 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
+			sb.append(Util.formatNumber(105D / profit, 6, false) + "\t\t=\t\tProjected ROI (DAYS)\n\n");
 			
 			sb.append("<i>Note: The values are calculated on current market prices and exchange rates."
 					+ " So they are very volatile and may dramatically change in the future.</i>");

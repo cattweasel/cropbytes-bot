@@ -54,11 +54,11 @@ public class User implements Serializable {
 
 	@Column(name = "last_seen", unique = false, nullable = false)
 	public Date getLastSeen() {
-		return lastSeen;
+		return lastSeen == null ? null : new Date(lastSeen.getTime());
 	}
 
 	public void setLastSeen(Date lastSeen) {
-		this.lastSeen = lastSeen;
+		this.lastSeen = lastSeen == null ? null : new Date(lastSeen.getTime());
 	}
 
 	@Column(name = "firstname", unique = false, nullable = true, length = 64)

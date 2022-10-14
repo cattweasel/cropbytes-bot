@@ -27,9 +27,6 @@ public class MarketDataProvider {
 			MarketQuote q = query.uniqueResult();
 			if (q != null) {
 				FiatQuote fiat = provideFiatQuote(session.get(Currency.class, "CBX"), currency);
-				if (fiat == null) {
-					throw new GeneralException("FiatQuote could not be resolved: CBX/" + currency.getCode());
-				}
 				quote = new MarketQuote();
 				quote.setAvgPrice(q.getAvgPrice() * fiat.getPrice());
 				quote.setCurrency(currency);

@@ -31,6 +31,7 @@ public class HelpCommand implements BotCommandExecutor {
 				+ "\n"
 				+ "Support Chat: https://t.me/cropbytes_bot_support\n"
 				+ "Source Code: https://github.com/cattweasel/cropbytes-bot")
+				.disableWebPagePreview(true)
 				.parseMode(ParseMode.HTML);
 		bot.execute(msg);
 	}

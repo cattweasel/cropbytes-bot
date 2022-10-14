@@ -55,7 +55,7 @@ public class ManageFarm implements CallbackExecutor {
 	}
 
 	private void printFarmOverview(Session session, Farm farm, StringBuilder sb, AssetType type) {
-		sb.append(String.format("<b>%s ASSETS</b>\n", type));
+		sb.append(String.format("<b>%s ASSETS</b>%n", type));
 		Query<FarmAsset> query = session.createQuery("from FarmAsset where farm= :farm and target.assetType= :assetType");
 		query.setParameter("farm", farm);
 		query.setParameter("assetType", type);
@@ -65,11 +65,10 @@ public class ManageFarm implements CallbackExecutor {
 		} else {
 			for (FarmAsset asset : assets) {
 				if (Asset.AssetType.CROPLAND == asset.getTarget().getAssetType()) {
-					sb.append(String.format("%s (%s) x %s\n", asset.getTarget().getName(),
+					sb.append(String.format("%s (%s) x %s%n", asset.getTarget().getName(),
 							asset.getSeeds().getName(), asset.getAmount()));
 				} else {
-					sb.append(String.format("%s x %s\n",
-							asset.getTarget().getName(), asset.getAmount()));
+					sb.append(String.format("%s x %s%n", asset.getTarget().getName(), asset.getAmount()));
 				}
 			}
 		}

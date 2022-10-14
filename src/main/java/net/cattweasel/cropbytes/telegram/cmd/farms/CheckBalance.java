@@ -101,6 +101,6 @@ public class CheckBalance implements CallbackExecutor {
 		}
 		sb.append(Util.formatNumber(requirements * -1D, 8) + "\t\t=\t\tTotal Requirements\n");
 		sb.append(Util.formatNumber(extracts, 8) + "\t\t=\t\tTotal Extracts\n");
-		sb.append(Util.formatNumber((extracts - requirements), 8) + "\t\t=\t\tResulting Balance\n\n");
+		sb.append(Util.formatNumber(extracts - requirements, 8) + "\t\t=\t\tResulting Balance\n\n");
 	}
 }

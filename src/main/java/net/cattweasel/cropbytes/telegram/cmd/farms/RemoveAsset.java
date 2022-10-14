@@ -56,12 +56,14 @@ public class RemoveAsset implements CallbackExecutor {
 		query.setParameter("target", target);
 		query.setParameter("seeds", seeds);
 		FarmAsset asset = query.uniqueResult();
-		asset.setAmount(asset.getAmount() - amount);
-		if (asset.getAmount() < 0) asset.setAmount(0);
-		if (asset.getAmount() == 0) {
-			session.remove(asset);
-		} else {
-			session.save(asset);
+		if (asset != null) {
+			asset.setAmount(asset.getAmount() - amount);
+			if (asset.getAmount() < 0) asset.setAmount(0);
+			if (asset.getAmount() == 0) {
+				session.remove(asset);
+			} else {
+				session.save(asset);
+			}
 		}
 		tx.commit();
 		EditMessageText message = new EditMessageText(chatId, messageId, "Asset was removed sucessfully!");

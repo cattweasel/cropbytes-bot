@@ -104,15 +104,15 @@ public class ProfitCommand implements BotCommandExecutor {
 		if (data != null && !"".equals(data)) {
 			currency = session.get(Currency.class, data.toUpperCase());
 			if (currency == null) {
-				String currencies = "";
+				StringBuilder sb = new StringBuilder();
 				Query<Currency> query = session.createQuery("from Currency");
 				for (Currency c : query.list()) {
-					if (!"".equals(currencies)) currencies += ", ";
-					currencies += c.getCode();
+					if (!"".equals(sb.toString())) sb.append(", ");
+					sb.append(c.getCode());
 				}
 				SendMessage msg = new SendMessage(chatId,
 						data.toUpperCase() + " is currently not a supported currency!\n"
-								+ "Supported currencies are: " + currencies);
+								+ "Supported currencies are: " + sb.toString());
 				bot.execute(msg);
 			}
 		}

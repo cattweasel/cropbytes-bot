@@ -34,14 +34,16 @@ public class AssetsCommand implements BotCommandExecutor {
 		for (Asset asset : query.list()) {
 			String duration = String.format("[%sh]", asset.getDuration());
 			if (Asset.AssetType.CROPLAND == assetType) {
-				duration = "[";
+				StringBuilder sbb = new StringBuilder();
+				sbb.append("[");
 				for (Requirement r : asset.getRequirements()) {
 					if (Asset.AssetType.SEED == r.getTarget().getAssetType()) {
-						if (!"[".equals(duration)) duration += ", ";
-						duration += r.getTarget().getDuration() + "h";
+						if (!"[".equals(duration)) sbb.append(", ");
+						sbb.append(r.getTarget().getDuration() + "h");
 					}
 				}
-				duration += "]";
+				sbb.append("]");
+				duration = sbb.toString();
 			}
 			sb.append(String.format("<b>%s\t-\t%s %s</b>%n", asset.getCode(), asset.getName(), duration));
 			sb.append(String.format("<i>Takes:\t\t%s</i>%n", printRequirements(asset.getRequirements())));
@@ -52,20 +54,20 @@ public class AssetsCommand implements BotCommandExecutor {
 	}
 	
 	private String printRequirements(List<Requirement> requirements) {
-		String result = "";
+		StringBuilder sb = new StringBuilder();
 		for (Requirement r : requirements) {
-			if (!"".equals(result)) result += ", ";
-			result += r.getAmount() + " " + r.getTarget().getCode();
+			if (!"".equals(sb.toString())) sb.append(", ");
+			sb.append(r.getAmount() + " " + r.getTarget().getCode());
 		}
-		return result;
+		return sb.toString();
 	}
 	
 	private String printExtracts(List<Extract> extracts) {
-		String result = "";
+		StringBuilder sb = new StringBuilder();
 		for (Extract e : extracts) {
-			if (!"".equals(result)) result += ", ";
-			result += e.getAmount() + " " + e.getTarget().getCode();
+			if (!"".equals(sb.toString())) sb.append(", ");
+			sb.append(e.getAmount() + " " + e.getTarget().getCode());
 		}
-		return result;
+		return sb.toString();
 	}
 }

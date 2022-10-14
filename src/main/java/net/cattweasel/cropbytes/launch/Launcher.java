@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 
 import net.cattweasel.cropbytes.task.AlertNotificationTask;
 import net.cattweasel.cropbytes.task.MarketDataRefreshTask;
-import net.cattweasel.cropbytes.telegram.UpdatesListener;
+import net.cattweasel.cropbytes.telegram.UpdateListener;
 
 public class Launcher {
 
@@ -17,7 +17,7 @@ public class Launcher {
 		}
 		
 		TelegramBot bot = new TelegramBot(telegramBotApiKey);
-		bot.setUpdatesListener(new UpdatesListener(bot));
+		bot.setUpdatesListener(new UpdateListener(bot));
 		
 		new MarketDataRefreshTask().start();
 		

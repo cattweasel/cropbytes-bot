@@ -42,15 +42,15 @@ public class QuotesCommand implements BotCommandExecutor {
 		if (data != null && !"".equals(data)) {
 			currency = session.get(Currency.class, data.toUpperCase());
 			if (currency == null) {
-				String currencies = "";
+				StringBuilder sb = new StringBuilder();
 				Query<Currency> query = session.createQuery("from Currency");
 				for (Currency c : query.list()) {
-					if (!"".equals(currencies)) currencies += ", ";
-					currencies += c.getCode();
+					if (!"".equals(sb.toString())) sb.append(", ");
+					sb.append(c.getCode());
 				}
 				SendMessage msg = new SendMessage(chatId,
 						data.toUpperCase() + " is currently not a supported currency!\n"
-								+ "Supported currencies are: " + currencies);
+								+ "Supported currencies are: " + sb.toString());
 				bot.execute(msg);
 			}
 		}
@@ -66,7 +66,7 @@ public class QuotesCommand implements BotCommandExecutor {
 			try {
 				MarketQuote quote = provider.provideMarketQuote(asset, currency);
 				sb.append(String.format("%s\t\t[%s]\t\t%s\t\t[%s%s%%]%n", Util.formatNumber(quote.getPrice(), 8, false),
-						asset.getCode(), asset.getName(), (quote.getPriceChange() >= 0D ? "+" : ""), quote.getPriceChange()));
+						asset.getCode(), asset.getName(), quote.getPriceChange() >= 0D ? "+" : "", quote.getPriceChange()));
 			} catch (GeneralException ex) {
 				LOG.error(ex);
 			}
@@ -82,7 +82,7 @@ public class QuotesCommand implements BotCommandExecutor {
 			try {
 				FiatQuote quote = provider.provideFiatQuote(currency, c);
 				sb.append(String.format("%s\t\t%s / %s\t\t[%s%s%%]%n", Util.formatNumber(quote.getPrice(), 8, false),
-						currency.getCode(), c.getCode(), (quote.getPriceChange() >= 0D ? "+" : ""), quote.getPriceChange()));
+						currency.getCode(), c.getCode(), quote.getPriceChange() >= 0D ? "+" : "", quote.getPriceChange()));
 			} catch (GeneralException ex) {
 				LOG.error(ex);
 			}

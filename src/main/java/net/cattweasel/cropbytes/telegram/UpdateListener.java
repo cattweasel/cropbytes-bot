@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
@@ -19,13 +20,13 @@ import net.cattweasel.cropbytes.tools.Auditor;
 import net.cattweasel.cropbytes.tools.GeneralException;
 import net.cattweasel.cropbytes.tools.HibernateUtil;
 
-public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener {
+public class UpdateListener implements UpdatesListener {
 
-	private static final Logger LOG = Logger.getLogger(UpdatesListener.class);
+	private static final Logger LOG = Logger.getLogger(UpdateListener.class);
 	
 	private final TelegramBot bot;
 	
-	public UpdatesListener(TelegramBot bot) {
+	public UpdateListener(TelegramBot bot) {
 		this.bot = bot;
 	}
 	
@@ -56,15 +57,14 @@ public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener 
 				}
 			}
 		}
-		return UpdatesListener.CONFIRMED_UPDATES_ALL;
+		return UpdateListener.CONFIRMED_UPDATES_ALL;
 	}
 
 	private void storeUserData(Session session, com.pengrad.telegrambot.model.User user) {
 		Transaction tx = session.beginTransaction();
-		net.cattweasel.cropbytes.telegram.User usr = session.get(
-				net.cattweasel.cropbytes.telegram.User.class, user.id());
+		User usr = session.get(User.class, user.id());
 		if (usr == null) {
-			usr = new net.cattweasel.cropbytes.telegram.User();
+			usr = new User();
 			usr.setUserId(user.id());
 			usr.setAdmin(false);
 			usr.setBroadcastDisabled(false);
@@ -81,20 +81,18 @@ public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener 
 
 	private void processMessage(Session session, Message message) throws GeneralException {
 		LOG.debug("Processing message: " + message);
-		if (message.text() != null && !message.text().trim().isEmpty()) {
-			if (message.text().startsWith("/")) {
-				Query<BotCommand> query = session.createQuery("from BotCommand where command= :command");
-				String txt = message.text();
-				if (txt.contains(" ")) txt = txt.split(" ")[0];
-				query.setParameter("command", txt);
-				BotCommand cmd = query.uniqueResult();
-				if (cmd != null) {
-					User user = session.get(User.class, message.from().id());
-					String data = message.text().replaceAll(cmd.getCommand(), "").trim();
-					processBotCommand(session, cmd, user, message.chat().id(), data);
-				} else {
-					bot.execute(new SendMessage(message.chat().id(), "Unrecognized command. Use /help to get a list of all commands."));
-				}
+		if (message.text() != null && !message.text().trim().isEmpty() && message.text().startsWith("/")) {
+			Query<BotCommand> query = session.createQuery("from BotCommand where command= :command");
+			String txt = message.text();
+			if (txt.contains(" ")) txt = txt.split(" ")[0];
+			query.setParameter("command", txt);
+			BotCommand cmd = query.uniqueResult();
+			if (cmd != null) {
+				User user = session.get(User.class, message.from().id());
+				String data = message.text().replaceAll(cmd.getCommand(), "").trim();
+				processBotCommand(session, cmd, user, message.chat().id(), data);
+			} else {
+				bot.execute(new SendMessage(message.chat().id(), "Unrecognized command. Use /help to get a list of all commands."));
 			}
 		}
 	}
@@ -118,11 +116,6 @@ public class UpdatesListener implements com.pengrad.telegrambot.UpdatesListener 
 				executor.execute(session, bot, user, chatId, data);
 				Auditor.audit(session, user, AuditEvent.AuditAction.EXECUTE_BOT_COMMAND, executor.getClass().getSimpleName(), data);
 			} catch (Exception ex) {
-				
-				
-				ex.printStackTrace(); // TODO -> REMOVE
-				
-				
 				throw new GeneralException(ex);
 			}
 		}
