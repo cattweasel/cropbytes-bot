@@ -16,6 +16,7 @@ public class MarketDataProvider {
 		this.session = session;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public MarketQuote provideMarketQuote(Asset asset, Currency currency) throws GeneralException {
 		Query<MarketQuote> query = session.createQuery("from MarketQuote where asset= :asset and currency= :currency");
 		query.setParameter("asset", asset);
@@ -42,6 +43,7 @@ public class MarketDataProvider {
 		return quote;
 	}
 
+	@SuppressWarnings("unchecked")
 	public FiatQuote provideFiatQuote(Currency baseCurrency, Currency targetCurrency) throws GeneralException {
 		Query<FiatQuote> query = session.createQuery("from FiatQuote where baseCurrency= :baseCurrency and targetCurrency= :targetCurrency");
 		query.setParameter("baseCurrency", baseCurrency);

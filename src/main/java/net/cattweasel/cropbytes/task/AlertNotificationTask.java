@@ -35,6 +35,7 @@ public class AlertNotificationTask extends Thread {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public void run() {
 		while (true) {
 			Session session = HibernateUtil.openSession();
@@ -95,6 +96,7 @@ public class AlertNotificationTask extends Thread {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean shouldBeSent(Session session, Alert alert, String data) {
 		Boolean result = true;
 		Query<AuditEvent> query = session.createQuery("from AuditEvent where action= :action and source= :source and user= :user and data= :data order by timestamp desc");
@@ -113,6 +115,7 @@ public class AlertNotificationTask extends Thread {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Currency> resolveCurrencies(Session session, Alert alert) {
 		List<Currency> currencies = new ArrayList<Currency>();
 		if (alert.getCustomCurrency() != null) {
@@ -125,6 +128,7 @@ public class AlertNotificationTask extends Thread {
 		return currencies;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Asset> resolveAssets(Session session, Alert alert) {
 		List<Asset> assets = new ArrayList<Asset>();
 		if (alert.getCustomAsset() != null) {

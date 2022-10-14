@@ -12,6 +12,7 @@ import net.cattweasel.cropbytes.telegram.User;
 
 public class BroadcastCommand implements BotCommandExecutor {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(Session session, TelegramBot bot, User user, Long chatId, String data) {
 		if (data != null && !"".equals(data.trim())) {

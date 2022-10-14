@@ -79,6 +79,7 @@ public class UpdateListener implements UpdatesListener {
 		tx.commit();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void processMessage(Session session, Message message) throws GeneralException {
 		LOG.debug("Processing message: " + message);
 		if (message.text() != null && !message.text().trim().isEmpty() && message.text().startsWith("/")) {
@@ -97,6 +98,7 @@ public class UpdateListener implements UpdatesListener {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void processBotCommand(Session session, BotCommand cmd, User user, Long chatId, String data) throws GeneralException {
 		LOG.debug("Processing BotCommand: " + cmd);
 		if (cmd.isDisabled()) {
@@ -112,7 +114,7 @@ public class UpdateListener implements UpdatesListener {
 		} else {
 			try {
 				Class<BotCommandExecutor> cls = (Class<BotCommandExecutor>) Class.forName(cmd.getExecutor());
-				BotCommandExecutor executor = cls.newInstance();
+				BotCommandExecutor executor = cls.getDeclaredConstructor().newInstance();
 				executor.execute(session, bot, user, chatId, data);
 				Auditor.audit(session, user, AuditEvent.AuditAction.EXECUTE_BOT_COMMAND, executor.getClass().getSimpleName(), data);
 			} catch (Exception ex) {
@@ -121,6 +123,7 @@ public class UpdateListener implements UpdatesListener {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void processCallbackQuery(Session session, CallbackQuery callbackQuery) throws GeneralException {
 		LOG.debug("Processing CallbackQuery: " + callbackQuery);
 		User user = session.get(User.class, callbackQuery.from().id());
@@ -138,7 +141,7 @@ public class UpdateListener implements UpdatesListener {
 			try {
 				Class<CallbackExecutor> cls = (Class<CallbackExecutor>) Class.forName(
 						"net.cattweasel.cropbytes.telegram.cmd." + data[0] + "." + data[1]);
-				CallbackExecutor executor = cls.newInstance();
+				CallbackExecutor executor = cls.getDeclaredConstructor().newInstance();
 				String payload = callbackQuery.data().replaceAll(data[0] + "#" + data[1], "");
 				payload = payload.startsWith("#") ? payload.substring(1, payload.length()) : payload;
 				executor.execute(session, bot, user, chatId, messageId, payload);

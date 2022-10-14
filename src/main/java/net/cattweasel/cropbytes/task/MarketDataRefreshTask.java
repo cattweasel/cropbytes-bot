@@ -45,6 +45,7 @@ public class MarketDataRefreshTask extends Thread {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void refreshMarketData() throws JSONException, IOException {
 		LOG.debug("Refreshing MarketQuotes and FiatQuotes..");
 		Date timestamp = new Date();
@@ -126,6 +127,7 @@ public class MarketDataRefreshTask extends Thread {
 		return session.get(Asset.class, code);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Currency resolveCurrency(String market) {
 		Currency result = null;
 		Query<Currency> query = session.createQuery("from Currency");

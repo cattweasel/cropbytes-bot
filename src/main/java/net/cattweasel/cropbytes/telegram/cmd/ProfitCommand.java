@@ -43,6 +43,7 @@ public class ProfitCommand implements BotCommandExecutor {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void appendProfits(Session session, StringBuilder sb, Currency currency, AssetType type) {
 		if (Asset.AssetType.CROPLAND == type) {
 			appendCroplandProfits(session, sb, currency);
@@ -67,6 +68,7 @@ public class ProfitCommand implements BotCommandExecutor {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void appendCroplandProfits(Session session, StringBuilder sb, Currency currency) {
 		ProfitCalculator calc = new ProfitCalculator(session);
 		Query<Asset> query = session.createQuery("from Asset where assetType= :assetType");
@@ -99,6 +101,7 @@ public class ProfitCommand implements BotCommandExecutor {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Currency resolveCurrency(Session session, TelegramBot bot, Long chatId, String data) {
 		Currency currency = session.get(Currency.class, "USDT");
 		if (data != null && !"".equals(data)) {

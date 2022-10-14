@@ -26,6 +26,7 @@ public class AssetsCommand implements BotCommandExecutor {
 		sendAssetConfiguration(session, bot, chatId, Asset.AssetType.TREE);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void sendAssetConfiguration(Session session, TelegramBot bot, Long originChatId, AssetType assetType) {
 		StringBuilder sb = new StringBuilder();
 		Query<Asset> query = session.createQuery("from Asset where assetType= :assetType and trialAsset= :trialAsset");

@@ -46,6 +46,7 @@ public class AddAsset implements CallbackExecutor {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void saveAsset(Session session, TelegramBot bot, Long chatId,
 			Integer messageId, Farm farm, Asset target, Integer amount, Asset seeds) {
 		Transaction tx = session.beginTransaction();

@@ -16,6 +16,7 @@ import net.cattweasel.cropbytes.telegram.User;
 public class StatsCommand implements BotCommandExecutor {
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void execute(Session session, TelegramBot bot, User user, Long chatId, String data) {
 		StringBuilder sb1 = new StringBuilder();
 		StringBuilder sb2 = new StringBuilder();

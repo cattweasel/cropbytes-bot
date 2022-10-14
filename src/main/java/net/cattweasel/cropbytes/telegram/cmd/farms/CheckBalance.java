@@ -72,6 +72,7 @@ public class CheckBalance implements CallbackExecutor {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Long countAssets(Session session, Farm farm, AssetType ... assetTypes) {
 		Long result = 0L;
 		for (AssetType assetType : assetTypes) {
@@ -85,6 +86,7 @@ public class CheckBalance implements CallbackExecutor {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void printAssetBalance(Session session, Farm farm, StringBuilder sb,
 			ProfitCalculator calc, AssetType ... assetTypes) throws GeneralException {
 		Double extracts = 0D;

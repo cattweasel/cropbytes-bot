@@ -48,6 +48,7 @@ public class RemoveAsset implements CallbackExecutor {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void removeAsset(Session session, TelegramBot bot, Long chatId,
 			Integer messageId, Farm farm, Asset target, Integer amount, Asset seeds) {
 		Transaction tx = session.beginTransaction();

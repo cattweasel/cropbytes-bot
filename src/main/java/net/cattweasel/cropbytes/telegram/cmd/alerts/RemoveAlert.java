@@ -33,6 +33,7 @@ public class RemoveAlert implements CallbackExecutor {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createRemoveDialog(Session session, TelegramBot bot, User user, Long chatId, Integer messageId) {
 		Query<Alert> query = session.createQuery("from Alert where user= :user");
 		query.setParameter("user", user);

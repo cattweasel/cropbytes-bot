@@ -54,6 +54,7 @@ public class ManageFarm implements CallbackExecutor {
 		printFarmOverview(session, farm, sb, Asset.AssetType.TREE);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void printFarmOverview(Session session, Farm farm, StringBuilder sb, AssetType type) {
 		sb.append(String.format("<b>%s ASSETS</b>%n", type));
 		Query<FarmAsset> query = session.createQuery("from FarmAsset where farm= :farm and target.assetType= :assetType");

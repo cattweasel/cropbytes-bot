@@ -80,6 +80,7 @@ public class SetupAlert implements CallbackExecutor {
 		bot.execute(message);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void createAssetSelector(Session session, TelegramBot bot, Long chatId, Integer messageId, String data) {
 		EditMessageText message = new EditMessageText(chatId, messageId, "Please select your custom asset:");
 		InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
@@ -118,6 +119,7 @@ public class SetupAlert implements CallbackExecutor {
 		bot.execute(message);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void createCurrencySelector(Session session, TelegramBot bot, Long chatId, Integer messageId, String data) {
 		EditMessageText message = new EditMessageText(chatId, messageId, "Please select your custom currency:");
 		InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();

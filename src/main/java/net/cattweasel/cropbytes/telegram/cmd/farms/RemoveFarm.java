@@ -45,6 +45,7 @@ public class RemoveFarm implements CallbackExecutor {
 		bot.execute(message);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void deleteFarm(Session session, TelegramBot bot, Long chatId, Integer messageId, Farm farm) {
 		Transaction tx = session.beginTransaction();
 		Query<FarmAsset> query = session.createQuery("from FarmAsset where farm= :farm");

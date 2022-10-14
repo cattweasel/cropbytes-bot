@@ -29,6 +29,7 @@ public class FarmsCommand implements BotCommandExecutor {
 
 	private static final Logger LOG = Logger.getLogger(FarmsCommand.class);
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(Session session, TelegramBot bot, User user, Long chatId, String data) {
 		StringBuilder sb = new StringBuilder();
@@ -65,6 +66,7 @@ public class FarmsCommand implements BotCommandExecutor {
 		bot.execute(msg);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<Farm> loadFarms(Session session, User user) {
 		Query<Farm> query = session.createQuery("from Farm where user= :user");
 		query.setParameter("user", user);
@@ -75,6 +77,7 @@ public class FarmsCommand implements BotCommandExecutor {
 		return String.format("Farm #%s (%s Assets)", farm.getId(), countFarmAssets(session, farm));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Integer countFarmAssets(Session session, Farm farm) {
 		Integer count = 0;
 		Query<FarmAsset> query = session.createQuery("from FarmAsset where farm= :farm");
@@ -99,6 +102,7 @@ public class FarmsCommand implements BotCommandExecutor {
 		bot.execute(message);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void createSeedSelector(Session session, TelegramBot bot, Long chatId,
 			Integer messageId, String data, Farm farm, String baseCallback) {
 		EditMessageText message = new EditMessageText(chatId, messageId, "Please select the cropland seeds:");
@@ -145,6 +149,7 @@ public class FarmsCommand implements BotCommandExecutor {
 		bot.execute(message);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void createAssetSelector(Session session, TelegramBot bot, Long chatId, Integer messageId,
 			String data, Farm farm, AssetType assetType, String baseCallback) {
 		EditMessageText message = new EditMessageText(chatId, messageId, String.format(
@@ -173,6 +178,7 @@ public class FarmsCommand implements BotCommandExecutor {
 		bot.execute(message);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void createFarmSelector(Session session, TelegramBot bot, User user, Long chatId,
 			Integer messageId, String headline, String baseCallback) {
 		Query<Farm> query = session.createQuery("from Farm where user= :user");

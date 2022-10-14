@@ -37,6 +37,7 @@ public class QuotesCommand implements BotCommandExecutor {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Currency resolveCurrency(Session session, TelegramBot bot, Long chatId, String data) {
 		Currency currency = session.get(Currency.class, "CBX");
 		if (data != null && !"".equals(data)) {
@@ -57,6 +58,7 @@ public class QuotesCommand implements BotCommandExecutor {
 		return currency;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void printMarketQuotes(Session session, Currency currency, StringBuilder sb) {
 		MarketDataProvider provider = new MarketDataProvider(session);
 		Query<Asset> query = session.createQuery("from Asset where tradeable= :tradeable");
@@ -73,6 +75,7 @@ public class QuotesCommand implements BotCommandExecutor {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void printFiatQuotes(Session session, Currency currency, StringBuilder sb) {
 		MarketDataProvider provider = new MarketDataProvider(session);
 		Query<Currency> query = session.createQuery("from Currency where code!= :code");
