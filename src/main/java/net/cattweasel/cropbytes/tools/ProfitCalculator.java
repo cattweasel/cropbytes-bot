@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import net.cattweasel.cropbytes.object.Asset;
 import net.cattweasel.cropbytes.object.Currency;
@@ -68,7 +67,9 @@ public class ProfitCalculator {
 		profit -= calculateRequirements(asset, seed);
 		LOG.debug(String.format("Resulting Profit: %s CBX [24 hrs]", profit));
 		// profit has to be provided on 24hrs basis here
-		profit = profit / 24D * duration; // apply duration factor to the profit
+		if (Asset.AssetType.ANIMAL != asset.getAssetType()) {
+			profit = profit / 24D * duration; // apply duration factor to the profit
+		}
 		LOG.debug(String.format("Resulting Profit: %s CBX [%s hrs]", profit, duration));
 		if (currency != null && currency.getCode() != cropBytesToken.getCode()) {
 			FiatQuote quote = provideFiatQuote(cropBytesToken, currency);
@@ -150,6 +151,7 @@ public class ProfitCalculator {
 				if (requirement.getTarget().getAssetType() == Asset.AssetType.FEED) {
 					price = price / 7D * 6D; // only 6/7 days normal feed
 				}
+				price = price / 24D * asset.getDuration(); // some animals have a longer duration than 24 hrs (eg BR)
 			}
 			result += price;
 		}
@@ -167,9 +169,7 @@ public class ProfitCalculator {
 
 	public Double calculateBalance(Farm farm) throws GeneralException {
 		Double result = 0D;
-		Query<FarmAsset> query = session.createQuery("from FarmAsset where farm= :farm");
-		query.setParameter("farm", farm);
-		for (FarmAsset asset : query.list()) {
+		for (FarmAsset asset : farm.getFarmAssets()) {
 			result += calculateProfit(asset.getTarget(), 168, asset.getSeeds()) * asset.getAmount();
 		}
 		return result;

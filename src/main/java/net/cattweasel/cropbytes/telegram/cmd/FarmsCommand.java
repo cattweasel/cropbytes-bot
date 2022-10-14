@@ -34,7 +34,7 @@ public class FarmsCommand implements BotCommandExecutor {
 		StringBuilder sb = new StringBuilder();
 		List<Farm> farms = loadFarms(session, user);
 		if (farms.isEmpty()) {
-			sb.append("You currently have no farms defined!");
+			sb.append("You currently have no farms defined! Please setup a new farm first.");
 		} else {
 			ProfitCalculator calc = new ProfitCalculator(session);
 			for (Farm farm : farms) {

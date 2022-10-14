@@ -12,6 +12,8 @@ import org.junit.Test;
 import net.cattweasel.cropbytes.object.Asset;
 import net.cattweasel.cropbytes.object.Currency;
 import net.cattweasel.cropbytes.object.MarketQuote;
+import net.cattweasel.cropbytes.telegram.Farm;
+import net.cattweasel.cropbytes.telegram.FarmAsset;
 
 public class ProfitCalculatorTest {
 
@@ -28,6 +30,7 @@ public class ProfitCalculatorTest {
 						createMarketQuote("CAS", "CBX", 2D),
 						createMarketQuote("COF", "CBX", 0.125D),
 						createMarketQuote("COS", "CBX", 0.1D),
+						createMarketQuote("EGG", "CBX", 0.075D),
 						createMarketQuote("FRF", "CBX", 1.3D),
 						createMarketQuote("FTR", "CBX", 0.558D),
 						createMarketQuote("GR", "CBX", 10D),
@@ -45,8 +48,12 @@ public class ProfitCalculatorTest {
 	@Test
 	public void testCalculateExtracts() throws GeneralException {
 		
-		Asset asset = session.get(Asset.class, "BR");
+		Asset asset = session.get(Asset.class, "EGR");
 		Double extracts = calculator.calculateExtracts(asset);
+		Assert.assertEquals(0.3D, extracts, 0.00005D);
+		
+		asset = session.get(Asset.class, "BR");
+		extracts = calculator.calculateExtracts(asset);
 		Assert.assertEquals(0.372D, extracts, 0.00005D);
 		
 		asset = session.get(Asset.class, "SPW");
@@ -66,9 +73,13 @@ public class ProfitCalculatorTest {
 	@Test
 	public void testCalculateRequirements() throws GeneralException {
 		
-		Asset asset = session.get(Asset.class, "BR");
+		Asset asset = session.get(Asset.class, "EGR");
 		Double requirements = calculator.calculateRequirements(asset);
-		Assert.assertEquals(0.290476D, requirements, 0.00005D);
+		Assert.assertEquals(0.45D, requirements, 0.00005D);
+		
+		asset = session.get(Asset.class, "BR");
+		requirements = calculator.calculateRequirements(asset);
+		Assert.assertEquals(0.5D, requirements, 0.00005D);
 		
 		asset = session.get(Asset.class, "SPW");
 		requirements = calculator.calculateRequirements(asset);
@@ -87,9 +98,13 @@ public class ProfitCalculatorTest {
 	@Test
 	public void testCalculateProfit() throws GeneralException {
 		
-		Asset asset = session.get(Asset.class, "BR");
+		Asset asset = session.get(Asset.class, "EGR");
 		Double profit = calculator.calculateProfit(asset);
-		Assert.assertEquals(0.5706666D, profit, 0.00005D);
+		Assert.assertEquals(-0.15D, profit, 0.00005D);
+		
+		asset = session.get(Asset.class, "BR");
+		profit = calculator.calculateProfit(asset);
+		Assert.assertEquals(-0.128D, profit, 0.00005D);
 		
 		asset = session.get(Asset.class, "SPW");
 		profit = calculator.calculateProfit(asset);
@@ -106,10 +121,30 @@ public class ProfitCalculatorTest {
 	}
 	
 	@Test
-	public void testCalculateBalance() {
-		// TODO
+	public void testCalculateBalance() throws GeneralException {
+		Farm farm = new Farm();
+		farm.addFarmAsset(createFarmAsset(farm, "EGR", null, 1));
+		farm.addFarmAsset(createFarmAsset(farm, "BR", null, 1));
+		farm.addFarmAsset(createFarmAsset(farm, "SPW", null, 1));
+		farm.addFarmAsset(createFarmAsset(farm, "BT", null, 1));
+		farm.addFarmAsset(createFarmAsset(farm, "OCL", "COS", 1));
+		Double balance = calculator.calculateBalance(farm);
+		Assert.assertEquals(24.46D, balance, 0.00005D);
 	}
 	
+	private FarmAsset createFarmAsset(Farm farm, String assetCode, String seedsCode, int amount) {
+		Asset asset = session.get(Asset.class, assetCode);
+		FarmAsset farmAsset = new FarmAsset();
+		farmAsset.setAmount(amount);
+		farmAsset.setFarm(farm);
+		farmAsset.setTarget(asset);
+		if (seedsCode != null) {
+			Asset seeds = session.get(Asset.class, seedsCode);
+			farmAsset.setSeeds(seeds);
+		}
+		return farmAsset;
+	}
+
 	private MarketQuote createMarketQuote(String assetCode, String currencyCode, Double value) {
 		MarketQuote quote = new MarketQuote();
 		quote.setAsset(session.get(Asset.class, assetCode));

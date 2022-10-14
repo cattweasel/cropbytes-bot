@@ -9,7 +9,7 @@ insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, na
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('BS', 'ANIMAL', 24, 0.0, 'BLACK_SHINE', 0, 1, 0, NULL);
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('BSH', 'ANIMAL', 24, 0.0, 'BADSHAW', 0, 1, 0, NULL);
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('BT', 'TREE', 120, 0.0, 'BANANA_TREE', 0, 1, 0, NULL);
-insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('CAS', 'SEED', 72, 0.0, 'CARROT_SEEDS', 0, 0, 0, NULL);
+insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('CAS', 'SEED', 120, 0.0, 'CARROT_SEEDS', 0, 0, 0, NULL);
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('CAF', 'FEED', 0, 0.6, 'CARROT_FEED', 0, 1, 0, 'CAS');
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('COS', 'SEED', 36, 0.0, 'CORN_SEEDS', 0, 0, 0, NULL);
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin) values ('COF', 'FEED', 0, 0.02, 'CORN_FEED', 0, 1, 0, 'COS');
