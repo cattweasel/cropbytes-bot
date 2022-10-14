@@ -42,6 +42,7 @@ public class AlertNotificationTask extends Thread {
 			MarketDataProvider provider = new MarketDataProvider(session);
 			Query<Alert> query = session.createQuery("from Alert");
 			for (Alert alert : query.list()) {
+				// skip alert if user has sleep mode enabled
 				if (!alert.getUser().isSleepMode()) {
 					try {
 						processAlert(session, provider, alert);
