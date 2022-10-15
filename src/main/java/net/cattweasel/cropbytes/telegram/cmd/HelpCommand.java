@@ -30,7 +30,9 @@ public class HelpCommand implements BotCommandExecutor {
 				+ "/help - displays the list of bot functions\n"
 				+ "\n"
 				+ "Support Chat: https://t.me/cropbytes_bot_support\n"
-				+ "Source Code: https://github.com/cattweasel/cropbytes-bot")
+				+ "Source Code: https://github.com/cattweasel/cropbytes-bot\n"
+				+ "\n"
+				+ "<i>Note: This is no kind of financial advice! The tools are created to make your own research easy. Please let your brain always be enabled when using it ;-)</i>")
 				.disableWebPagePreview(true)
 				.parseMode(ParseMode.HTML);
 		bot.execute(msg);
