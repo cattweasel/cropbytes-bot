@@ -39,7 +39,7 @@ public class AssetsCommand implements BotCommandExecutor {
 				sbb.append("[");
 				for (Requirement r : asset.getRequirements()) {
 					if (Asset.AssetType.SEED == r.getTarget().getAssetType()) {
-						if (!"[".equals(duration)) sbb.append(", ");
+						if (sbb.length() > 0) sbb.append(", ");
 						sbb.append(r.getTarget().getDuration() + "h");
 					}
 				}

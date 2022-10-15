@@ -69,9 +69,10 @@ public class AlertNotificationTask extends Thread {
 				if (shouldBeSent(session, alert, data)) {
 					SendMessage message = new SendMessage(alert.getUser().getUserId(), String.format(
 							"<b>CBX / %s</b> is currently at <b>%s%%</b>%n"
-									+ "https://www.cropbytes.com/exchange/cbx%s%n"
+									+ "https://www.cropbytes.com/exchange/cbx%s%n%n"
 									+ "<i>Note: You can manage these notifications with the /alerts command</i>",
 							currency.getCode(), Util.formatNumber(quote.getPriceChange(), 6, true), currency.getCode().toLowerCase()))
+							.disableWebPagePreview(true)
 							.parseMode(ParseMode.HTML);
 					bot.execute(message);
 					Auditor.audit(session, alert.getUser(), AuditEvent.AuditAction.SEND_ALERT_NOTIFICATION, "alert:" + alert.getId(), data);
@@ -86,10 +87,10 @@ public class AlertNotificationTask extends Thread {
 				if (shouldBeSent(session, alert, data)) {
 					SendMessage message = new SendMessage(alert.getUser().getUserId(), String.format(
 							"<b>%s</b> (%s) is currently at <b>%s%%</b>%n"
-									+ "https://www.cropbytes.com/exchange/%scbx%n"
+									+ "https://www.cropbytes.com/exchange/%scbx%n%n"
 									+ "<i>Note: You can manage these notifications with the /alerts command</i>",
 							asset.getCode(), asset.getName(), Util.formatNumber(quote.getPriceChange(), 6, true),
-							asset.getCode().toLowerCase())).parseMode(ParseMode.HTML);
+							asset.getCode().toLowerCase())).disableWebPagePreview(true).parseMode(ParseMode.HTML);
 					bot.execute(message);
 					Auditor.audit(session, alert.getUser(), AuditEvent.AuditAction.SEND_ALERT_NOTIFICATION, "alert:" + alert.getId(), data);
 				}
