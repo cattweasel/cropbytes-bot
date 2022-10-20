@@ -136,10 +136,7 @@ public class ProfitCalculator {
 		profit -= calculateRequirements(asset, seed);
 		LOG.debug(String.format("Resulting Profit: %s CBX [24 hrs]", profit));
 		// profit has to be provided on 24hrs basis here
-		if (Asset.AssetType.ANIMAL != asset.getAssetType()) {
-			profit = profit / 24D * duration; // apply duration factor to the profit
-			// but only if it is no animal. animals like BR and MUD take longer than 24 hours!
-		}
+		profit = profit / 24D * duration; // apply duration factor to the profit
 		LOG.debug(String.format("Resulting Profit: %s CBX [%s hrs]", profit, duration));
 		if (currency != null && !currency.getCode().equals(cropBytesToken.getCode())) {
 			FiatQuote quote = provideFiatQuote(cropBytesToken, currency);
@@ -279,6 +276,22 @@ public class ProfitCalculator {
 			result += calculateProfit(asset.getTarget(), 168, asset.getSeeds()) * asset.getAmount();
 		}
 		return result;
+	}
+	
+	// TODO -> JAVADOC
+	public Double calculateMiningProfit(Asset asset, Currency currency) throws GeneralException {
+		if (!asset.isMineable()) {
+			throw new GeneralException("Cannot calculate mining profitability for non-mineable asset!");
+		}
+		MarketQuote assetQuote = provider.provideMarketQuote(asset, cropBytesToken);
+		MarketQuote pmixQuote = provider.provideMarketQuote(session.get(Asset.class, "PMIX"), cropBytesToken);
+		Double miningPrice = asset.getMiningProMix() * pmixQuote.getPrice() + asset.getMiningFees();
+		Double profit = assetQuote.getPrice() - miningPrice;
+		if (currency != null && !currency.getCode().equals(cropBytesToken.getCode())) {
+			FiatQuote quote = provideFiatQuote(cropBytesToken, currency);
+			profit = profit * quote.getPrice(); // convert to the desired currency
+		}
+		return profit;
 	}
 	
 	/**

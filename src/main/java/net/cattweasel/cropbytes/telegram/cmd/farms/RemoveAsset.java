@@ -52,10 +52,17 @@ public class RemoveAsset implements CallbackExecutor {
 	private void removeAsset(Session session, TelegramBot bot, Long chatId,
 			Integer messageId, Farm farm, Asset target, Integer amount, Asset seeds) {
 		Transaction tx = session.beginTransaction();
-		Query<FarmAsset> query = session.createQuery("from FarmAsset where farm= :farm and target= :target and seeds= :seeds");
-		query.setParameter("farm", farm);
-		query.setParameter("target", target);
-		query.setParameter("seeds", seeds);
+		Query<FarmAsset> query = null;
+		if (Asset.AssetType.CROPLAND == target.getAssetType()) {
+			query = session.createQuery("from FarmAsset where farm= :farm and target= :target and seeds= :seeds");
+			query.setParameter("farm", farm);
+			query.setParameter("target", target);
+			query.setParameter("seeds", seeds);
+		} else {
+			query = session.createQuery("from FarmAsset where farm= :farm and target= :target");
+			query.setParameter("farm", farm);
+			query.setParameter("target", target);
+		}
 		FarmAsset asset = query.uniqueResult();
 		if (asset != null) {
 			asset.setAmount(asset.getAmount() - amount);

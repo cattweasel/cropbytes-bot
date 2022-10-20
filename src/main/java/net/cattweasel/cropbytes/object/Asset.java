@@ -44,6 +44,10 @@ public class Asset implements Serializable {
 	private Double grindingFees;
 	private List<Requirement> requirements;
 	private List<Extract> extracts;
+	private Boolean mineable;
+	private Double miningProMix;
+	private Double miningFees;
+	private Integer miningDuration;
 	
 	@Id
 	@Column(name = "code", unique = true, nullable = false, length = 8)
@@ -159,5 +163,41 @@ public class Asset implements Serializable {
 			extracts = new ArrayList<Extract>();
 		}
 		extracts.add(extract);
+	}
+
+	@Column(name = "mineable", unique = false, nullable = false)
+	public Boolean isMineable() {
+		return mineable;
+	}
+
+	public void setMineable(Boolean mineable) {
+		this.mineable = mineable;
+	}
+
+	@Column(name = "mining_pmix", unique = false, nullable = true)
+	public Double getMiningProMix() {
+		return miningProMix;
+	}
+
+	public void setMiningProMix(Double miningProMix) {
+		this.miningProMix = miningProMix;
+	}
+
+	@Column(name = "mining_fees", unique = false, nullable = true)
+	public Double getMiningFees() {
+		return miningFees;
+	}
+
+	public void setMiningFees(Double miningFees) {
+		this.miningFees = miningFees;
+	}
+
+	@Column(name = "mining_duration", unique = false, nullable = true)
+	public Integer getMiningDuration() {
+		return miningDuration;
+	}
+
+	public void setMiningDuration(Integer miningDuration) {
+		this.miningDuration = miningDuration;
 	}
 }
