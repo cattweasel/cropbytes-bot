@@ -34,6 +34,8 @@ public class ProfitCalculatorTest {
 						createMarketQuote("FRF", "CBX", 1.3D),
 						createMarketQuote("FTR", "CBX", 0.558D),
 						createMarketQuote("GR", "CBX", 10D),
+						createMarketQuote("ORT", "CBX", 975D),
+						createMarketQuote("PMIX", "CBX", 3.1D),
 						createMarketQuote("POW", "CBX", 0.623D),
 						createMarketQuote("WATER", "CBX", 0.05D)
 				)
@@ -100,11 +102,11 @@ public class ProfitCalculatorTest {
 		
 		Asset asset = session.get(Asset.class, "EGR");
 		Double profit = calculator.calculateProfit(asset);
-		Assert.assertEquals(-0.15D, profit, 0.00005D);
+		Assert.assertEquals(-1.05D, profit, 0.00005D);
 		
 		asset = session.get(Asset.class, "BR");
 		profit = calculator.calculateProfit(asset);
-		Assert.assertEquals(-0.128D, profit, 0.00005D);
+		Assert.assertEquals(-0.896D, profit, 0.00005D);
 		
 		asset = session.get(Asset.class, "SPW");
 		profit = calculator.calculateProfit(asset);
@@ -129,7 +131,14 @@ public class ProfitCalculatorTest {
 		farm.addFarmAsset(createFarmAsset(farm, "BT", null, 1));
 		farm.addFarmAsset(createFarmAsset(farm, "OCL", "COS", 1));
 		Double balance = calculator.calculateBalance(farm);
-		Assert.assertEquals(24.46D, balance, 0.00005D);
+		Assert.assertEquals(22.792D, balance, 0.00005D);
+	}
+	
+	@Test
+	public void testCalculateMiningProfit() throws GeneralException {
+		Asset asset = session.get(Asset.class, "ORT");
+		Double profit = calculator.calculateMiningProfit(asset);
+		Assert.assertEquals(32.773D, profit, 0.00005D);
 	}
 	
 	private FarmAsset createFarmAsset(Farm farm, String assetCode, String seedsCode, int amount) {

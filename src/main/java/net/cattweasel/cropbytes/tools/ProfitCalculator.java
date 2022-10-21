@@ -278,13 +278,31 @@ public class ProfitCalculator {
 		return result;
 	}
 	
-	// TODO -> JAVADOC
+	/**
+	 * Check the mining profitability of an asset (market price vs mining price).
+	 * 
+	 * @param asset The asset to be checked
+	 * @return The resulting profitability
+	 * @throws GeneralException If profitability cannot be calculated
+	 */
+	public Double calculateMiningProfit(Asset asset) throws GeneralException {
+		return calculateMiningProfit(asset, cropBytesToken);
+	}
+	
+	/**
+	 * Check the mining profitability of an asset (market price vs mining price).
+	 * 
+	 * @param asset The asset to be checked
+	 * @param currency The currency to be applied
+	 * @return The resulting profitability
+	 * @throws GeneralException If profitability cannot be calculated
+	 */
 	public Double calculateMiningProfit(Asset asset, Currency currency) throws GeneralException {
 		if (!asset.isMineable()) {
 			throw new GeneralException("Cannot calculate mining profitability for non-mineable asset!");
 		}
-		MarketQuote assetQuote = provider.provideMarketQuote(asset, cropBytesToken);
-		MarketQuote pmixQuote = provider.provideMarketQuote(session.get(Asset.class, "PMIX"), cropBytesToken);
+		MarketQuote assetQuote = provideMarketQuote(asset, cropBytesToken);
+		MarketQuote pmixQuote = provideMarketQuote(session.get(Asset.class, "PMIX"), cropBytesToken);
 		Double miningPrice = asset.getMiningProMix() * pmixQuote.getPrice() + asset.getMiningFees();
 		Double profit = assetQuote.getPrice() - miningPrice;
 		if (currency != null && !currency.getCode().equals(cropBytesToken.getCode())) {

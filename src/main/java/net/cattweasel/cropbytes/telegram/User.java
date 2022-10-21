@@ -23,6 +23,7 @@ public class User implements Serializable {
 	private Boolean admin;
 	private Boolean broadcastDisabled;
 	private Boolean sleepMode;
+	private Boolean banned;
 	
 	@Id
 	@Column(name = "user_id", unique = true, nullable = false)
@@ -104,5 +105,14 @@ public class User implements Serializable {
 
 	public void setSleepMode(Boolean sleepMode) {
 		this.sleepMode = sleepMode;
+	}
+
+	@Column(name = "banned", unique = false, nullable = false)
+	public Boolean isBanned() {
+		return banned;
+	}
+
+	public void setBanned(Boolean banned) {
+		this.banned = banned;
 	}
 }

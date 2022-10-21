@@ -39,13 +39,18 @@ public class UpdateListener implements UpdatesListener {
 				session = HibernateUtil.openSession();
 				if (update.message() != null) {
 					storeUserData(session, update.message().from());
+					if (session.get(User.class, update.message().from().id()).isBanned()) {
+						continue;
+					}
 					processMessage(session, update.message());
 				} else if (update.callbackQuery() != null) {
 					storeUserData(session, update.callbackQuery().from());
+					if (session.get(User.class, update.callbackQuery().from().id()).isBanned()) {
+						continue;
+					}
 					processCallbackQuery(session, update.callbackQuery());
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				LOG.error(ex);
 			} finally {
 				if (session != null) {
@@ -69,6 +74,7 @@ public class UpdateListener implements UpdatesListener {
 			usr.setAdmin(false);
 			usr.setBroadcastDisabled(false);
 			usr.setSleepMode(false);
+			usr.setBanned(false);
 		}
 		if (user.languageCode() != null) usr.setLanguage(user.languageCode());
 		if (user.username() != null) usr.setUsername(user.username());
