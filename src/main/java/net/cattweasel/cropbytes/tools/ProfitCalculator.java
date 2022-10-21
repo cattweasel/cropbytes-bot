@@ -74,7 +74,7 @@ public class ProfitCalculator {
 	 * @throws GeneralException If the profitability cannot be calculated
 	 */
 	public Double calculateProfit(Asset asset, Asset seed) throws GeneralException {
-		return calculateProfit(asset, 168, seed, cropBytesToken); // default: 1 week, CBX
+		return calculateProfit(asset, 168, seed, cropBytesToken, true); // default: 1 week, CBX + grinding fees
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class ProfitCalculator {
 	 * @throws GeneralException If the profitability cannot be calculated
 	 */
 	public Double calculateProfit(Asset asset, Integer duration, Currency currency) throws GeneralException {
-		return calculateProfit(asset, duration, null, currency);
+		return calculateProfit(asset, duration, null, currency, true); // default: grinding fees
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class ProfitCalculator {
 	 * @throws GeneralException If the profitability cannot be calculated
 	 */
 	public Double calculateProfit(Asset asset, Integer duration, Asset seed) throws GeneralException {
-		return calculateProfit(asset, duration, seed, cropBytesToken); // default: CBX
+		return calculateProfit(asset, duration, seed, cropBytesToken, true); // default: CBX + grinding fees
 	}
 	
 	/**
@@ -122,17 +122,19 @@ public class ProfitCalculator {
 	 * @param duration The duration (hours) to be applied for calculation
 	 * @param seed The seed to be used (if asset is cropland)
 	 * @param currency The currency to be used for output
+	 * @param grindingFees Select if grinding fees should be applies
 	 * @return The profitability of the given asset
 	 * @throws GeneralException If the profitability cannot be calculated
 	 */
-	public Double calculateProfit(Asset asset, Integer duration, Asset seed, Currency currency) throws GeneralException {
+	public Double calculateProfit(Asset asset, Integer duration, Asset seed,
+			Currency currency, Boolean grindingFees) throws GeneralException {
 		LOG.debug(String.format("Calculating Profit for %s [%s] (Duration: %s hrs, Asset Duration: %s hrs)",
 				asset.getCode(), asset.getName(), duration, asset.getDuration()));
 		if (Asset.AssetType.ANIMAL != asset.getAssetType() && Asset.AssetType.BUILDING != asset.getAssetType()
 				&& Asset.AssetType.CROPLAND != asset.getAssetType() && Asset.AssetType.TREE != asset.getAssetType()) {
 			throw new GeneralException("Unknown AssetType for ProfitCalculator: " + asset.getAssetType());
 		}
-		Double profit = calculateExtracts(asset, seed);
+		Double profit = calculateExtracts(asset, seed, grindingFees);
 		profit -= calculateRequirements(asset, seed);
 		LOG.debug(String.format("Resulting Profit: %s CBX [24 hrs]", profit));
 		// profit has to be provided on 24hrs basis here
@@ -166,7 +168,7 @@ public class ProfitCalculator {
 	 * @throws GeneralException If extracts cannot be calculated
 	 */
 	public Double calculateExtracts(Asset asset) throws GeneralException {
-		return calculateExtracts(asset, null);
+		return calculateExtracts(asset, null, true);
 	}
 	
 	/**
@@ -174,10 +176,11 @@ public class ProfitCalculator {
 	 * 
 	 * @param asset The asset to be calculated
 	 * @param seed The seed to be used (if asset is cropland)
+	 * @param grindingFees Select to apply grinding fees or not
 	 * @return The costs for all extracts (24 hours)
 	 * @throws GeneralException If extracts cannot be calculated
 	 */
-	public Double calculateExtracts(Asset asset, Asset seed) throws GeneralException {
+	public Double calculateExtracts(Asset asset, Asset seed, Boolean grindingFees) throws GeneralException {
 		if (Asset.AssetType.CROPLAND == asset.getAssetType()
 				&& (seed == null || Asset.AssetType.SEED != seed.getAssetType())) {
 			throw new GeneralException("Cannot calculate extracts for cropland without a seed!");
@@ -196,11 +199,13 @@ public class ProfitCalculator {
 			}
 			
 			// TREE + CROPLAND: Apply grinding fees for extracts
-			Double grindingFees = extract.getAmount() * extract.getTarget().getGrindingFees() / asset.getDuration() * 24D; // grinding fees for extract
-			if (Asset.AssetType.CROPLAND == asset.getAssetType()) {
-				grindingFees = extract.getAmount() * extract.getTarget().getGrindingFees() / seed.getDuration() * 24D; // grinding fees for extract
+			if (grindingFees) {
+				Double fees = extract.getAmount() * extract.getTarget().getGrindingFees() / asset.getDuration() * 24D; // grinding fees for extract
+				if (Asset.AssetType.CROPLAND == asset.getAssetType()) {
+					fees = extract.getAmount() * extract.getTarget().getGrindingFees() / seed.getDuration() * 24D; // grinding fees for extract
+				}
+				result -= fees;
 			}
-			result -= grindingFees;
 			
 			// BUILDING: Nothing to do, plain extract price is fine
 			
@@ -273,7 +278,11 @@ public class ProfitCalculator {
 	public Double calculateBalance(Farm farm) throws GeneralException {
 		Double result = 0D;
 		for (FarmAsset asset : farm.getFarmAssets()) {
-			result += calculateProfit(asset.getTarget(), 168, asset.getSeeds()) * asset.getAmount();
+			if (Asset.AssetType.ANIMAL == asset.getTarget().getAssetType() && farm.isGrazingMode()) {
+				result -= asset.getTarget().getGrazingFees() * asset.getAmount();
+			} else {
+				result += calculateProfit(asset.getTarget(), 168, asset.getSeeds(), cropBytesToken, farm.isGrindingFees()) * asset.getAmount();
+			}
 		}
 		return result;
 	}

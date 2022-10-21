@@ -34,12 +34,17 @@ public class ManageFarm implements CallbackExecutor {
 				Farm farm = session.get(Farm.class, Integer.valueOf(parts[0]));
 				StringBuilder sb = new StringBuilder();
 				sb.append("<b>Farm #" + farm.getId() + "</b> (" + FarmsCommand.countFarmAssets(session, farm) + " Assets)\n\n");
+				sb.append("<b>Grazing Mode:</b> " + (farm.isGrazingMode() ? "enabled" : "disabled") + "\n");
+				sb.append("<b>Grinding Fees:</b> " + (farm.isGrindingFees() ? "enabled" : "disabled") + "\n\n");
 				printFarmOverview(session, farm, sb);
 				EditMessageText message = new EditMessageText(chatId, messageId, sb.toString()).parseMode(ParseMode.HTML);
 				InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
 				keyboard.addRow(
 						new InlineKeyboardButton("Add Asset(s)").callbackData("farms#AddAsset#" + farm.getId()),
 						new InlineKeyboardButton("Remove Asset(s)").callbackData("farms#RemoveAsset#" + farm.getId()));
+				keyboard.addRow(
+						new InlineKeyboardButton("Toogle Grazing Mode").callbackData("farms#ToggleGrazingMode#" + farm.getId()),
+						new InlineKeyboardButton("Toggle Grinding Fees").callbackData("farms#ToggleGrindingFees#" + farm.getId()));
 				keyboard.addRow(new InlineKeyboardButton("<< Back to Farms").callbackData("/farms"));
 				message.replyMarkup(keyboard);
 				bot.execute(message);

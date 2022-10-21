@@ -70,7 +70,7 @@ public class PacksCommand implements BotCommandExecutor {
 		for (Asset asset : assets) {
 			if (asset.getAssetType() == Asset.AssetType.CROPLAND) {
 				Asset seed = session.get(Asset.class, "COS");
-				profit += calc.calculateProfit(asset, 24, seed, currency);
+				profit += calc.calculateProfit(asset, 24, seed, currency, true);
 			} else {
 				profit += calc.calculateProfit(asset, 24, currency);
 			}

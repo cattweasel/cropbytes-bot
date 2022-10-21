@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +23,8 @@ public class Farm implements Serializable {
 	private Integer id;
 	private User user;
 	private List<FarmAsset> farmAssets;
+	private Boolean grindingFees;
+	private Boolean grazingMode;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,5 +60,23 @@ public class Farm implements Serializable {
 			farmAssets = new ArrayList<FarmAsset>();
 		}
 		farmAssets.add(farmAsset);
+	}
+
+	@Column(name = "grinding_fees", unique = false, nullable = false)
+	public Boolean isGrindingFees() {
+		return grindingFees;
+	}
+
+	public void setGrindingFees(Boolean grindingFees) {
+		this.grindingFees = grindingFees;
+	}
+
+	@Column(name = "grazing_mode", unique = false, nullable = false)
+	public Boolean isGrazingMode() {
+		return grazingMode;
+	}
+
+	public void setGrazingMode(Boolean grazingMode) {
+		this.grazingMode = grazingMode;
 	}
 }

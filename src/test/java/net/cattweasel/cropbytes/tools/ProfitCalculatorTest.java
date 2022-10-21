@@ -68,7 +68,7 @@ public class ProfitCalculatorTest {
 		
 		asset = session.get(Asset.class, "OCL");
 		Asset seed = session.get(Asset.class, "COS");
-		extracts = calculator.calculateExtracts(asset, seed);
+		extracts = calculator.calculateExtracts(asset, seed, true);
 		Assert.assertEquals(0.84D, extracts, 0.00005D);
 	}
 	
@@ -125,6 +125,7 @@ public class ProfitCalculatorTest {
 	@Test
 	public void testCalculateBalance() throws GeneralException {
 		Farm farm = new Farm();
+		farm.setGrindingFees(true);
 		farm.addFarmAsset(createFarmAsset(farm, "EGR", null, 1));
 		farm.addFarmAsset(createFarmAsset(farm, "BR", null, 1));
 		farm.addFarmAsset(createFarmAsset(farm, "SPW", null, 1));

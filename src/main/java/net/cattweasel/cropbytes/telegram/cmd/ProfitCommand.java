@@ -81,7 +81,7 @@ public class ProfitCommand implements BotCommandExecutor {
 			q.setParameter("assetType", Asset.AssetType.CROPLAND);
 			for (Asset cropland : q.list()) {
 				try {
-					Double profit = calc.calculateProfit(cropland, 168, seed, currency);
+					Double profit = calc.calculateProfit(cropland, 168, seed, currency, true);
 					profits.put(cropland, profit);
 				} catch (GeneralException ex) {
 					LOG.error(ex);

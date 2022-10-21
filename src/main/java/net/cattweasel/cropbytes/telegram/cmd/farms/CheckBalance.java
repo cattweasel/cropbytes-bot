@@ -40,9 +40,12 @@ public class CheckBalance implements CallbackExecutor {
 					Farm farm = session.get(Farm.class, Integer.valueOf(parts[0]));
 					StringBuilder sb = new StringBuilder();
 					
-					// TODO -> make this more generic
 					sb.append("<b>ANIMAL ASSETS (" + countAssets(session, farm, Asset.AssetType.ANIMAL) + ")</b>\n");
-					printAssetBalance(session, farm, sb, calc, Asset.AssetType.ANIMAL);
+					if (!farm.isGrazingMode()) {
+						printAssetBalance(session, farm, sb, calc, Asset.AssetType.ANIMAL);
+					} else {
+						printGrazingFees(farm, sb);
+					}
 					
 					sb.append("<b>BUILDING ASSETS (" + countAssets(session, farm, Asset.AssetType.BUILDING) + ")</b>\n");
 					printAssetBalance(session, farm, sb, calc, Asset.AssetType.BUILDING);
@@ -96,13 +99,26 @@ public class CheckBalance implements CallbackExecutor {
 			query.setParameter("farm", farm);
 			query.setParameter("assetType", assetType);
 			for (FarmAsset asset : query.list()) {
-				extracts += calc.calculateExtracts(asset.getTarget(), asset.getSeeds()) * asset.getAmount()
-						/ 24D * 168D; // TODO: REMOVE THIS LINE AND MAKE IT CONFIGURABLE
-				requirements += calc.calculateRequirements(asset.getTarget(), asset.getSeeds()) * asset.getAmount() / 24D * 168D;
+				if (Asset.AssetType.ANIMAL == asset.getTarget().getAssetType() && farm.isGrazingMode()) {
+					requirements += asset.getTarget().getGrazingFees() * asset.getAmount();
+				} else {
+					extracts += calc.calculateExtracts(asset.getTarget(), asset.getSeeds(), farm.isGrindingFees()) * asset.getAmount() / 24D * 168D;
+					requirements += calc.calculateRequirements(asset.getTarget(), asset.getSeeds()) * asset.getAmount() / 24D * 168D;
+				}
 			}
 		}
 		sb.append(Util.formatNumber(requirements * -1D, 8) + "\t\t=\t\tTotal Requirements\n");
 		sb.append(Util.formatNumber(extracts, 8) + "\t\t=\t\tTotal Extracts\n");
 		sb.append(Util.formatNumber(extracts - requirements, 8) + "\t\t=\t\tResulting Balance\n\n");
+	}
+	
+	private void printGrazingFees(Farm farm, StringBuilder sb) {
+		Double fees = 0D;
+		for (FarmAsset asset : farm.getFarmAssets()) {
+			if (Asset.AssetType.ANIMAL == asset.getTarget().getAssetType()) {
+				fees -= asset.getTarget().getGrazingFees() * asset.getAmount();
+			}
+		}
+		sb.append(Util.formatNumber(fees, 8) + "\t\t=\t\tGrazing Fees\n\n");
 	}
 }
