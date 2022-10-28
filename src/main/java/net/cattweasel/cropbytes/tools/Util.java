@@ -28,6 +28,7 @@ public class Util {
 	 * @return The formatted number
 	 */
 	public static String formatNumber(Double input, Integer length, Boolean includeSign) {
+		input = Math.round(input * 1000000D) / 1000000D;
 		String str = (input >= 0D ? "+" : "") + input.toString();
 		if (!includeSign) {
 			str = str.substring(1, str.length());

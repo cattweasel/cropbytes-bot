@@ -40,7 +40,11 @@ public class GrazingCommand implements BotCommandExecutor {
 			for (Asset asset : query.list()) {
 				try {
 					Double profit = calc.calculateProfit(asset, 168);
-					profit -= asset.getGrazingFees();
+					if (profit >= 0D) {
+						profit -= asset.getGrazingFees();
+					} else {
+						profit = profit * -1D - asset.getGrazingFees();
+					}
 					if (!currency.getCode().equals("CBX")) {
 						MarketDataProvider provider = new MarketDataProvider(session);
 						FiatQuote quote = provider.provideFiatQuote(session.get(Currency.class, "CBX"), currency);
@@ -53,7 +57,9 @@ public class GrazingCommand implements BotCommandExecutor {
 			}
 			appendGrazingFees(sb, grazingFees);
 			sb.append("\n<i>Note: All prices are displayed in " + currency.getCode() + "."
-					+ " You can change the currency by appending it to the command (e.g. /grazing usdt)</i>");
+					+ " You can change the currency by appending it to the command (e.g. /grazing usdt)</i>\n\n"
+					+ "The values are [asset profitability] - [grazing fees]. So if the value is positive you"
+					+ " will save money by grazing the animal instead of feeding it.");
 			SendMessage msg = new SendMessage(chatId, sb.toString()).parseMode(ParseMode.HTML);
 			bot.execute(msg);
 		}

@@ -36,8 +36,10 @@ public class MiningCommand implements BotCommandExecutor {
 			appendProfits(session, sb, currency, Asset.AssetType.BUILDING);
 			appendProfits(session, sb, currency, Asset.AssetType.CROPLAND);
 			appendProfits(session, sb, currency, Asset.AssetType.TREE);
-			sb.append("\n<i>Note: All asset prices are displayed in " + currency.getCode() + "."
-					+ " You can change the currency by appending it to the command (e.g. /mining usdt)</i>");
+			sb.append("\n<i>Note: All prices are displayed in " + currency.getCode() + "."
+					+ " You can change the currency by appending it to the command (e.g. /mining usdt)</i>\n\n"
+					+ "The values are [market price] - [mining costs]. So if the value is positive you"
+					+ " will save money by mining this asset insted of buying it on market.");
 			SendMessage msg = new SendMessage(chatId, sb.toString()).parseMode(ParseMode.HTML);
 			bot.execute(msg);
 		}
