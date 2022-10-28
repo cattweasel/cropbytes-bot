@@ -50,9 +50,10 @@ public class MiningCommand implements BotCommandExecutor {
 		if (sb.length() != 0) sb.append("\n");
 		sb.append(String.format("<b>%s ASSETS</b>%n", type));
 		ProfitCalculator calc = new ProfitCalculator(session);
-		Query<Asset> query = session.createQuery("from Asset where assetType= :assetType and mineable= :mineable");
+		Query<Asset> query = session.createQuery("from Asset where assetType= :assetType and mineable= :mineable and tradeable= :tradeable");
 		query.setParameter("assetType", type);
 		query.setParameter("mineable", true);
+		query.setParameter("tradeable", true);
 		Map<Asset, Double> profits = new HashMap<Asset, Double>();
 		for (Asset asset : query.list()) {
 			try {

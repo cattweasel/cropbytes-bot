@@ -47,8 +47,8 @@ public class Asset implements Serializable {
 	private Boolean mineable;
 	private Double miningProMix;
 	private Double miningFees;
-	private Integer miningDuration;
 	private Double grazingFees;
+	private Double appetiteLevel;
 	
 	@Id
 	@Column(name = "code", unique = true, nullable = false, length = 8)
@@ -193,15 +193,6 @@ public class Asset implements Serializable {
 		this.miningFees = miningFees;
 	}
 
-	@Column(name = "mining_duration", unique = false, nullable = true)
-	public Integer getMiningDuration() {
-		return miningDuration;
-	}
-
-	public void setMiningDuration(Integer miningDuration) {
-		this.miningDuration = miningDuration;
-	}
-
 	@Column(name = "grazing_fees", unique = false, nullable = true)
 	public Double getGrazingFees() {
 		return grazingFees;
@@ -209,5 +200,14 @@ public class Asset implements Serializable {
 
 	public void setGrazingFees(Double grazingFees) {
 		this.grazingFees = grazingFees;
+	}
+
+	@Column(name = "appetite_level", unique = false, nullable = true)
+	public Double getAppetiteLevel() {
+		return appetiteLevel;
+	}
+
+	public void setAppetiteLevel(Double appetiteLevel) {
+		this.appetiteLevel = appetiteLevel;
 	}
 }

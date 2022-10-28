@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.pengrad.telegrambot.TelegramBot;
@@ -39,15 +40,22 @@ public class AlertNotificationTask extends Thread {
 	public void run() {
 		while (true) {
 			Session session = HibernateUtil.openSession();
+			List<Long> deleteNotifications = new ArrayList<Long>();
 			MarketDataProvider provider = new MarketDataProvider(session);
 			Query<Alert> query = session.createQuery("from Alert");
 			for (Alert alert : query.list()) {
-				// skip alert if user has sleep mode enabled
-				if (!alert.getUser().isSleepMode()) {
-					try {
-						processAlert(session, provider, alert);
-					} catch (Exception ex) {
-						LOG.error(ex);
+				// delete alert if user is inactive for >= 4 weeks
+				if (alert.getUser().getLastSeen().before(new Date(new Date().getTime() - 2419200000L))) {
+					deleteAlert(session, alert, !deleteNotifications.contains(alert.getUser().getUserId()));
+					deleteNotifications.add(alert.getUser().getUserId());
+				} else {
+					// skip alert if user has sleep mode enabled
+					if (!alert.getUser().isSleepMode()) {
+						try {
+							processAlert(session, provider, alert);
+						} catch (Exception ex) {
+							LOG.error(ex);
+						}
 					}
 				}
 			}
@@ -57,6 +65,19 @@ public class AlertNotificationTask extends Thread {
 			} catch (InterruptedException ex) {
 				LOG.error(ex);
 			}
+		}
+	}
+
+	private void deleteAlert(Session session, Alert alert, Boolean sendNotification) {
+		Transaction tx = session.beginTransaction();
+		session.remove(alert);
+		tx.commit();
+		if (sendNotification) {
+			SendMessage message = new SendMessage(alert.getUser().getUserId(), String.format("<b>ATTENTION</b>\n\n"
+					+ "Your alert(s) has been removed because you did not interact with the bot for the last 4 weeks."
+					+ " If you still want to receive alerts please use the /alerts command and setup new one(s)."))
+					.parseMode(ParseMode.HTML);
+			bot.execute(message);
 		}
 	}
 

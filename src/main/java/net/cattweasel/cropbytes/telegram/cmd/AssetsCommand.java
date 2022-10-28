@@ -47,6 +47,9 @@ public class AssetsCommand implements BotCommandExecutor {
 				duration = sbb.toString();
 			}
 			sb.append(String.format("<b>%s\t-\t%s %s</b>%n", asset.getCode(), asset.getName(), duration));
+			if (asset.isMineable()) {
+				sb.append(String.format("<i>Mining:\t\t%s PMIX + %s CBX</i>%n", asset.getMiningProMix(), asset.getMiningFees()));
+			}
 			sb.append(String.format("<i>Takes:\t\t%s</i>%n", printRequirements(asset.getRequirements())));
 			sb.append(String.format("<i>Gives:\t\t%s</i>%n%n", printExtracts(asset.getExtracts())));
 		}
