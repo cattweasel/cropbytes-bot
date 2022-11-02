@@ -52,11 +52,11 @@ public class ProfitCalculatorTest {
 		
 		Asset asset = session.get(Asset.class, "EGR");
 		Double extracts = calculator.calculateExtracts(asset);
-		Assert.assertEquals(0.3D, extracts, 0.00005D);
+		Assert.assertEquals(0.375D, extracts, 0.00005D);
 		
 		asset = session.get(Asset.class, "BR");
 		extracts = calculator.calculateExtracts(asset);
-		Assert.assertEquals(0.372D, extracts, 0.00005D);
+		Assert.assertEquals(0.558D, extracts, 0.00005D);
 		
 		asset = session.get(Asset.class, "SPW");
 		extracts = calculator.calculateExtracts(asset);
@@ -102,11 +102,11 @@ public class ProfitCalculatorTest {
 		
 		Asset asset = session.get(Asset.class, "EGR");
 		Double profit = calculator.calculateProfit(asset);
-		Assert.assertEquals(-1.05D, profit, 0.00005D);
+		Assert.assertEquals(-0.525D, profit, 0.00005D);
 		
 		asset = session.get(Asset.class, "BR");
 		profit = calculator.calculateProfit(asset);
-		Assert.assertEquals(-0.896D, profit, 0.00005D);
+		Assert.assertEquals(0.406D, profit, 0.00005D);
 		
 		asset = session.get(Asset.class, "SPW");
 		profit = calculator.calculateProfit(asset);
@@ -126,13 +126,14 @@ public class ProfitCalculatorTest {
 	public void testCalculateBalance() throws GeneralException {
 		Farm farm = new Farm();
 		farm.setGrindingFees(true);
+		farm.setGrazingMode(false);
 		farm.addFarmAsset(createFarmAsset(farm, "EGR", null, 1));
 		farm.addFarmAsset(createFarmAsset(farm, "BR", null, 1));
 		farm.addFarmAsset(createFarmAsset(farm, "SPW", null, 1));
 		farm.addFarmAsset(createFarmAsset(farm, "BT", null, 1));
 		farm.addFarmAsset(createFarmAsset(farm, "OCL", "COS", 1));
 		Double balance = calculator.calculateBalance(farm);
-		Assert.assertEquals(22.792D, balance, 0.00005D);
+		Assert.assertEquals(49.238D, balance, 0.00005D);
 	}
 	
 	@Test
@@ -140,6 +141,7 @@ public class ProfitCalculatorTest {
 		Asset asset = session.get(Asset.class, "ORT");
 		Double profit = calculator.calculateMiningProfit(asset);
 		Assert.assertEquals(32.773D, profit, 0.00005D);
+		// TODO: static mining attributes. cannot test with weekly changes
 	}
 	
 	private FarmAsset createFarmAsset(Farm farm, String assetCode, String seedsCode, int amount) {

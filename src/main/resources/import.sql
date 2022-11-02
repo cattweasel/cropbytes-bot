@@ -74,7 +74,7 @@ insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (11,
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (12, 5.0, 'PC', 'COF');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (13, 2.0, 'PC', 'WATER');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (14, 3.0, 'COWT', 'COF');
-insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (15, 4.0, 'RR', 'COF');
+insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (15, 3.0, 'RR', 'COF');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (16, 3.0, 'RR', 'WATER');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (17, 1.0, 'DS', 'COF');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (18, 1.0, 'DS', 'WATER');

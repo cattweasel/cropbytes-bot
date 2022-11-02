@@ -39,12 +39,8 @@ public class GrazingCommand implements BotCommandExecutor {
 			Map<Asset, Double> grazingFees = new HashMap<Asset, Double>();
 			for (Asset asset : query.list()) {
 				try {
-					Double profit = calc.calculateProfit(asset, 168);
-					if (profit >= 0D) {
-						profit -= asset.getGrazingFees();
-					} else {
-						profit = profit * -1D - asset.getGrazingFees();
-					}
+					Double profit = calc.calculateProfit(asset, 336);
+					profit = asset.getGrazingFees() * -1D - profit;
 					if (!currency.getCode().equals("CBX")) {
 						MarketDataProvider provider = new MarketDataProvider(session);
 						FiatQuote quote = provider.provideFiatQuote(session.get(Currency.class, "CBX"), currency);
