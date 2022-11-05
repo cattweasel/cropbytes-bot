@@ -281,7 +281,8 @@ public class ProfitCalculator {
 			if (Asset.AssetType.ANIMAL == asset.getTarget().getAssetType() && farm.isGrazingMode()) {
 				result -= asset.getTarget().getGrazingFees() * asset.getAmount();
 			} else {
-				result += calculateProfit(asset.getTarget(), 336, asset.getSeeds(), cropBytesToken, farm.isGrindingFees()) * asset.getAmount();
+				result += calculateProfit(asset.getTarget(), 168, asset.getSeeds(),
+						cropBytesToken, farm.isGrindingFees()) * asset.getAmount();
 			}
 		}
 		return result;

@@ -52,9 +52,9 @@ public class GrazingCommand implements BotCommandExecutor {
 				}
 			}
 			appendGrazingFees(sb, grazingFees);
-			sb.append("\n<i>Note: All prices are displayed in " + currency.getCode() + " (weekly projection)."
+			sb.append("\n<i>Note: All prices are displayed in " + currency.getCode() + " (2 week projection)."
 					+ " You can change the currency by appending it to the command (e.g. /grazing usdt)</i>\n\n"
-					+ "The values are [asset profitability] - [grazing fees]. So if the value is positive you"
+					+ "The values are [grazing fees * -1] - [asset profit]. So if the value is positive you"
 					+ " will save money by grazing the animal instead of feeding it.");
 			SendMessage msg = new SendMessage(chatId, sb.toString()).parseMode(ParseMode.HTML);
 			bot.execute(msg);
