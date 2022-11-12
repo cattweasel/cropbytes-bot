@@ -73,7 +73,7 @@ public class AlertNotificationTask extends Thread {
 		session.remove(alert);
 		tx.commit();
 		if (sendNotification) {
-			SendMessage message = new SendMessage(alert.getUser().getUserId(), String.format("<b>ATTENTION</b>\n\n"
+			SendMessage message = new SendMessage(alert.getUser().getUserId(), String.format("<b>ATTENTION</b>%n%n"
 					+ "Your alert(s) has been removed because you did not interact with the bot for the last 4 weeks."
 					+ " If you still want to receive alerts please use the /alerts command and setup new one(s)."))
 					.parseMode(ParseMode.HTML);
