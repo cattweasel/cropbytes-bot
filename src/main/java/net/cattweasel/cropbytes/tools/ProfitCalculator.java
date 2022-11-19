@@ -253,6 +253,7 @@ public class ProfitCalculator {
 					price = price / 7D * 6D; // only 6/7 days normal feed
 				}
 				price = price / 24D * asset.getDuration(); // some animals have a longer duration than 24 hrs (eg BR)
+				price = price * asset.getAppetiteLevel(); // apply appetite level for animal assets here
 			}
 			result += price;
 		}
@@ -261,7 +262,7 @@ public class ProfitCalculator {
 		if (Asset.AssetType.ANIMAL == asset.getAssetType()) {
 			Asset fruitFeed = session.get(Asset.class, "FRF");
 			MarketQuote quote = provideMarketQuote(fruitFeed, cropBytesToken);
-			Double fruitPrice = quote.getPrice() / 7D;
+			Double fruitPrice = quote.getPrice() / 7D * asset.getAppetiteLevel();
 			result += fruitPrice; // add 1/7 fruit feed
 		}
 		

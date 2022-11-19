@@ -1,10 +1,7 @@
 package net.cattweasel.cropbytes.task;
 
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -18,6 +15,7 @@ import net.cattweasel.cropbytes.object.Currency;
 import net.cattweasel.cropbytes.object.FiatQuote;
 import net.cattweasel.cropbytes.object.MarketQuote;
 import net.cattweasel.cropbytes.tools.HibernateUtil;
+import net.cattweasel.cropbytes.tools.Util;
 
 public class MarketDataRefreshTask extends Thread {
 
@@ -49,7 +47,7 @@ public class MarketDataRefreshTask extends Thread {
 	private void refreshMarketData() throws JSONException, IOException {
 		LOG.debug("Refreshing MarketQuotes and FiatQuotes..");
 		Date timestamp = new Date();
-		JSONObject json = new JSONObject(readStringFromURL("https://api.cropbytes.com/api/v2/peatio/public/markets/tickers"));
+		JSONObject json = new JSONObject(Util.readStringFromURL("https://api.cropbytes.com/api/v2/peatio/public/markets/tickers"));
 		Transaction tx = session.beginTransaction();
 		for (String key : json.keySet()) {
 			JSONObject parent = json.getJSONObject(key);
@@ -113,13 +111,6 @@ public class MarketDataRefreshTask extends Thread {
 			}
 		}
 		tx.commit();
-	}
-	
-	private String readStringFromURL(String requestURL) throws IOException {
-	    try (Scanner scanner = new Scanner(new URL(requestURL).openStream(), StandardCharsets.UTF_8.toString())) {
-	        scanner.useDelimiter("\\A");
-	        return scanner.hasNext() ? scanner.next() : "";
-	    }
 	}
 	
 	private Asset resolveAsset(String market, Currency currency) {

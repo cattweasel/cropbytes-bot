@@ -96,8 +96,13 @@ public class ProfitCommand implements BotCommandExecutor {
 				.stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		for (Map.Entry<Asset, Double> entry : result.entrySet()) {
-			sb.append(String.format("%s\t\t[%s]\t\t%s%n", Util.formatNumber(entry.getValue(), 8),
-					entry.getKey().getCode(), entry.getKey().getName()));
+			if (Asset.AssetType.ANIMAL == entry.getKey().getAssetType()) {
+				sb.append(String.format("%s\t\t[%s]\t\t%s\t\t[%s]%n", Util.formatNumber(entry.getValue(), 8),
+						entry.getKey().getCode(), entry.getKey().getName(), entry.getKey().getAppetiteLevel()));
+			} else {
+				sb.append(String.format("%s\t\t[%s]\t\t%s%n", Util.formatNumber(entry.getValue(), 8),
+						entry.getKey().getCode(), entry.getKey().getName()));
+			}
 		}
 	}
 

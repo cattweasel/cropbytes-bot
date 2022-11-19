@@ -58,7 +58,7 @@ insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, na
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin, mineable) values ('WTW', 'BUILDING', 24, 0.0, 'WIND_TURBINE_1KW', 0, 1, 0, NULL, 0);
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin, mineable) values ('ZING', 'ANIMAL', 24, 0.0, 'ZING', 0, 1, 0, NULL, 0);
 insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin, mineable) values ('SBF', 'FEED', 0, 0, 'BREED_FEED', 1, 1, 0, NULL, 0);
-insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin, mineable) values ('PMIX', 'FEED', 0, 0, 'PRO_MIX', 1, 1, 0, NULL);
+insert into cb_tools_bot.cb_asset (code, asset_type, duration, grinding_fees, name, pro_asset, tradeable, trial_asset, origin, mineable) values ('PMIX', 'GENERAL', 0, 0, 'PRO_MIX', 1, 1, 0, NULL);
 
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (1, 3.0, 'BS', 'COF');
 insert into cb_tools_bot.cb_requirement (id, amount, origin, target) values (2, 2.0, 'BS', 'WATER');

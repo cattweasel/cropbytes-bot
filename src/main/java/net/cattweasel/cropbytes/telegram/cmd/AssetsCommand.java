@@ -39,7 +39,7 @@ public class AssetsCommand implements BotCommandExecutor {
 				sbb.append("[");
 				for (Requirement r : asset.getRequirements()) {
 					if (Asset.AssetType.SEED == r.getTarget().getAssetType()) {
-						if (sbb.length() > 0) sbb.append(", ");
+						if (sbb.length() > 1) sbb.append(", ");
 						sbb.append(r.getTarget().getDuration() + "h");
 					}
 				}
@@ -50,7 +50,11 @@ public class AssetsCommand implements BotCommandExecutor {
 			if (asset.isMineable()) {
 				sb.append(String.format("<i>Mining:\t\t%s PMIX + %s CBX</i>%n", asset.getMiningProMix(), asset.getMiningFees()));
 			}
-			sb.append(String.format("<i>Takes:\t\t%s</i>%n", printRequirements(asset.getRequirements())));
+			if (Asset.AssetType.ANIMAL == asset.getAssetType()) {
+				sb.append(String.format("<i>Takes:\t\t%s\t\t[%s]</i>%n", printRequirements(asset.getRequirements()), asset.getAppetiteLevel()));
+			} else {
+				sb.append(String.format("<i>Takes:\t\t%s</i>%n", printRequirements(asset.getRequirements())));
+			}
 			sb.append(String.format("<i>Gives:\t\t%s</i>%n%n", printExtracts(asset.getExtracts())));
 		}
 		SendMessage message = new SendMessage(originChatId, sb.toString()).parseMode(ParseMode.HTML);

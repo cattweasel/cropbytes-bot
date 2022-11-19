@@ -157,10 +157,7 @@ public class AlertNotificationTask extends Thread {
 		if (alert.getCustomAsset() != null) {
 			assets.add(alert.getCustomAsset());
 		} else if (alert.isAllAssets()) {
-			Query<Asset> query = session.createQuery("from Asset where assetType!= :assetType and proAsset= :proAsset and trialAsset= :trialAsset and tradeable= :tradeable");
-			query.setParameter("assetType", Asset.AssetType.SEED);
-			query.setParameter("proAsset", false);
-			query.setParameter("trialAsset", false);
+			Query<Asset> query = session.createQuery("from Asset where tradeable= :tradeable");
 			query.setParameter("tradeable", true);
 			assets.addAll(query.list());
 		}

@@ -205,14 +205,14 @@ public class CheckBalance implements CallbackExecutor {
 				if (requirement.getTarget().getAssetType() == Asset.AssetType.FEED) {
 					balance = balance / 7D * 6D;
 				}
-				balance = balance / 24D * asset.getDuration();
+				balance = balance / 24D * asset.getDuration() * asset.getAppetiteLevel();
 			}
 			result.put(code, balance);
 		}
 		if (Asset.AssetType.ANIMAL == asset.getAssetType()) {
 			Double current = result.get("FRF");
 			current = current == null ? 1D / 7D : current + (1D / 7D);
-			result.put("FRF", current);
+			result.put("FRF", current * asset.getAppetiteLevel());
 		}
 		return result;
 	}
