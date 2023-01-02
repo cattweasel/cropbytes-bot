@@ -151,9 +151,9 @@ public class FarmsCommand implements BotCommandExecutor {
 
 	@SuppressWarnings("unchecked")
 	public static void createAssetSelector(Session session, TelegramBot bot, Long chatId, Integer messageId,
-			String data, Farm farm, AssetType assetType, String baseCallback) {
+			String data, Farm farm, AssetType assetType, String baseCallback, boolean removal) {
 		EditMessageText message = new EditMessageText(chatId, messageId, String.format(
-				"Please select the %s to add:", assetType.name().toLowerCase()));
+				"Please select the %s to %s:", assetType.name().toLowerCase(), removal ? "remove" : "add"));
 		InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
 		Query<Asset> query = session.createQuery("from Asset where assetType= :assetType and proAsset= :proAsset and trialAsset= :trialAsset");
 		query.setParameter("assetType", assetType);

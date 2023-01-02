@@ -28,7 +28,7 @@ public class RemoveAsset implements CallbackExecutor {
 			FarmsCommand.createAssetTypeSelector(bot, chatId, messageId, farm, "farms#RemoveAsset");
 		} else if (parts.length == 2) {
 			Asset.AssetType assetType = Asset.AssetType.valueOf(parts[1]);
-			FarmsCommand.createAssetSelector(session, bot, chatId, messageId, data, farm, assetType, BASE_CALLBACK);
+			FarmsCommand.createAssetSelector(session, bot, chatId, messageId, data, farm, assetType, BASE_CALLBACK, true);
 		} else if (parts.length == 3) {
 			FarmsCommand.createAmountSelector(bot, chatId, messageId, data, farm, BASE_CALLBACK);
 		} else if (parts.length == 4) {
