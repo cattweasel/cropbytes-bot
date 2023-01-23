@@ -22,6 +22,7 @@ public class HelpCommand implements BotCommandExecutor {
 				+ "/farms - manage your farms for calculations\n"
 				+ "/packs - calculate ROI for starter packs\n"
 				+ "/profit - calculate asset profitabilities\n"
+				+ "/promix - calculate promix profitabilities\n"
 				+ "/mining - calculate mining profitabilities\n"
 				+ "/grazing - calculate grazing profitabilities\n"
 				+ "\n"
