@@ -1,5 +1,7 @@
 package net.cattweasel.cropbytes.telegram.cmd.farms;
 
+import java.util.Map;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -18,23 +20,27 @@ import net.cattweasel.cropbytes.telegram.cmd.FarmsCommand;
 
 public class RemoveAsset implements CallbackExecutor {
 
-	private static final String BASE_CALLBACK = "farms#RemoveAsset";
+	@Override
+	public String getBaseCallback() {
+		return "farms#RemoveAsset";
+	}
 	
 	@Override
-	public void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data) {
+	public void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data) {
 		String[] parts = data.split("#");
 		Farm farm = session.get(Farm.class, Integer.valueOf(parts[0]));
 		if (parts.length == 1) {
 			FarmsCommand.createAssetTypeSelector(bot, chatId, messageId, farm, "farms#RemoveAsset");
 		} else if (parts.length == 2) {
 			Asset.AssetType assetType = Asset.AssetType.valueOf(parts[1]);
-			FarmsCommand.createAssetSelector(session, bot, chatId, messageId, data, farm, assetType, BASE_CALLBACK, true);
+			FarmsCommand.createAssetSelector(session, bot, chatId, messageId, data, farm, assetType, getBaseCallback(), true);
 		} else if (parts.length == 3) {
-			FarmsCommand.createAmountSelector(bot, chatId, messageId, data, farm, BASE_CALLBACK);
+			FarmsCommand.createAmountSelector(bot, chatId, messageId, data, farm, getBaseCallback());
 		} else if (parts.length == 4) {
 			Asset.AssetType assetType = Asset.AssetType.valueOf(parts[1]);
 			if (Asset.AssetType.CROPLAND == assetType) {
-				FarmsCommand.createSeedSelector(session, bot, chatId, messageId, data, farm, BASE_CALLBACK);
+				FarmsCommand.createSeedSelector(session, bot, chatId, messageId, data, farm, getBaseCallback());
 			} else {
 				Asset target = session.get(Asset.class, parts[2]);
 				Integer amount = Integer.valueOf(parts[3]);

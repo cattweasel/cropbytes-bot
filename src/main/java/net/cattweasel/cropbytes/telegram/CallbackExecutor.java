@@ -1,10 +1,15 @@
 package net.cattweasel.cropbytes.telegram;
 
+import java.util.Map;
+
 import org.hibernate.Session;
 
 import com.pengrad.telegrambot.TelegramBot;
 
 public interface CallbackExecutor {
 
-	void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data);
+	String getBaseCallback();
+	
+	void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data);
 }

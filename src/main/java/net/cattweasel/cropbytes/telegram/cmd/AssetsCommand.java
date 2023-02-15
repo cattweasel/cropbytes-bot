@@ -2,6 +2,7 @@ package net.cattweasel.cropbytes.telegram.cmd;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -11,24 +12,36 @@ import com.pengrad.telegrambot.request.SendMessage;
 
 import net.cattweasel.cropbytes.object.Asset;
 import net.cattweasel.cropbytes.object.Asset.AssetType;
+import net.cattweasel.cropbytes.object.Currency;
 import net.cattweasel.cropbytes.object.Extract;
+import net.cattweasel.cropbytes.object.FiatQuote;
 import net.cattweasel.cropbytes.object.Requirement;
 import net.cattweasel.cropbytes.telegram.BotCommandExecutor;
 import net.cattweasel.cropbytes.telegram.User;
+import net.cattweasel.cropbytes.tools.GeneralException;
+import net.cattweasel.cropbytes.tools.MarketDataProvider;
 
 public class AssetsCommand implements BotCommandExecutor {
 
+	private static final Logger LOG = Logger.getLogger(AssetsCommand.class);
+	
 	@Override
 	public void execute(Session session, TelegramBot bot, User user, Long chatId, String data) {
-		sendAssetConfiguration(session, bot, chatId, Asset.AssetType.ANIMAL);
-		sendAssetConfiguration(session, bot, chatId, Asset.AssetType.BUILDING);
-		sendAssetConfiguration(session, bot, chatId, Asset.AssetType.CROPLAND);
-		sendAssetConfiguration(session, bot, chatId, Asset.AssetType.TREE);
+		try {
+			sendAssetConfiguration(session, bot, chatId, Asset.AssetType.ANIMAL);
+			sendAssetConfiguration(session, bot, chatId, Asset.AssetType.BUILDING);
+			sendAssetConfiguration(session, bot, chatId, Asset.AssetType.CROPLAND);
+			sendAssetConfiguration(session, bot, chatId, Asset.AssetType.TREE);
+		} catch (GeneralException ex) {
+			LOG.error(ex);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void sendAssetConfiguration(Session session, TelegramBot bot, Long originChatId, AssetType assetType) {
+	private void sendAssetConfiguration(Session session, TelegramBot bot, Long originChatId, AssetType assetType) throws GeneralException {
 		StringBuilder sb = new StringBuilder();
+		MarketDataProvider provider = new MarketDataProvider(session);
+		FiatQuote usdtQuote = provider.provideFiatQuote(session.get(Currency.class, "CBX"), session.get(Currency.class, "USDT"));
 		Query<Asset> query = session.createQuery("from Asset where assetType= :assetType and trialAsset= :trialAsset");
 		query.setParameter("assetType", assetType);
 		query.setParameter("trialAsset", false);
@@ -48,7 +61,8 @@ public class AssetsCommand implements BotCommandExecutor {
 			}
 			sb.append(String.format("<b>%s\t-\t%s %s</b>%n", asset.getCode(), asset.getName(), duration));
 			if (asset.isMineable()) {
-				sb.append(String.format("<i>Mining:\t\t%s PMIX + %s CBX</i>%n", asset.getMiningProMix(), asset.getMiningFees()));
+				sb.append(String.format("<i>Mining:\t\t%s PMIX + %s CBX</i>%n", asset.getMiningProMix(),
+						asset.getMiningFees() * asset.getMiningRatio() / usdtQuote.getPrice()));
 			}
 			if (Asset.AssetType.ANIMAL == asset.getAssetType()) {
 				sb.append(String.format("<i>Takes:\t\t%s\t\t[%s]</i>%n", printRequirements(asset.getRequirements()), asset.getAppetiteLevel()));

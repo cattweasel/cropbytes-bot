@@ -1,7 +1,9 @@
 package net.cattweasel.cropbytes.telegram;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -25,8 +27,10 @@ public class UpdateListener implements UpdatesListener {
 	private static final Logger LOG = Logger.getLogger(UpdateListener.class);
 	
 	private final TelegramBot bot;
+	private final Map<Long, CallbackExecutor> callbackCache;
 	
 	public UpdateListener(TelegramBot bot) {
+		this.callbackCache = new HashMap<Long, CallbackExecutor>();
 		this.bot = bot;
 	}
 	
@@ -101,6 +105,13 @@ public class UpdateListener implements UpdatesListener {
 			} else {
 				bot.execute(new SendMessage(message.chat().id(), "Unrecognized command. Use /help to get a list of all commands."));
 			}
+		} else {
+			CallbackExecutor ce = callbackCache.get(message.from().id());
+			if (ce != null) {
+				ce.execute(session, bot, callbackCache, session.get(User.class, message.from().id()),
+						message.chat().id(), message.messageId(), ce.getBaseCallback() + "#" + message.text());
+				callbackCache.remove(message.from().id());
+			}
 		}
 	}
 
@@ -150,7 +161,7 @@ public class UpdateListener implements UpdatesListener {
 				CallbackExecutor executor = cls.getDeclaredConstructor().newInstance();
 				String payload = callbackQuery.data().replaceAll(data[0] + "#" + data[1], "");
 				payload = payload.startsWith("#") ? payload.substring(1, payload.length()) : payload;
-				executor.execute(session, bot, user, chatId, messageId, payload);
+				executor.execute(session, bot, callbackCache, user, chatId, messageId, payload);
 				Auditor.audit(session, session.get(User.class, callbackQuery.from().id()),
 						AuditEvent.AuditAction.EXECUTE_CALLBACK, executor.getClass().getSimpleName(), payload);
 			} catch (Exception ex) {

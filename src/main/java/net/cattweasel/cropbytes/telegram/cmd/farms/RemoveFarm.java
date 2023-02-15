@@ -1,5 +1,7 @@
 package net.cattweasel.cropbytes.telegram.cmd.farms;
 
+import java.util.Map;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -17,13 +19,17 @@ import net.cattweasel.cropbytes.telegram.cmd.FarmsCommand;
 
 public class RemoveFarm implements CallbackExecutor {
 	
-	private static final String BASE_CALLBACK = "farms#RemoveFarm";
+	@Override
+	public String getBaseCallback() {
+		return "farms#RemoveFarm";
+	}
 
 	@Override
-	public void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data) {
+	public void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data) {
 		if (data == null || "".equals(data.trim())) {
 			FarmsCommand.createFarmSelector(session, bot, user, chatId, messageId,
-					"Please select the farm to be removed:", BASE_CALLBACK);
+					"Please select the farm to be removed:", getBaseCallback());
 		} else {
 			String[] parts = data.split("#");
 			if (parts.length == 1) {
@@ -40,7 +46,7 @@ public class RemoveFarm implements CallbackExecutor {
 		InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
 		keyboard.addRow(
 				new InlineKeyboardButton("<< Back to Farms").callbackData("/farms"),
-				new InlineKeyboardButton("YES").callbackData(BASE_CALLBACK + "#" + farm.getId() + "#CONFIRM"));
+				new InlineKeyboardButton("YES").callbackData(getBaseCallback() + "#" + farm.getId() + "#CONFIRM"));
 		message.replyMarkup(keyboard);
 		bot.execute(message);
 	}

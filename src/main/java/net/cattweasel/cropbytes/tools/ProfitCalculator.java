@@ -314,7 +314,9 @@ public class ProfitCalculator {
 		}
 		MarketQuote assetQuote = provideMarketQuote(asset, cropBytesToken);
 		MarketQuote pmixQuote = provideMarketQuote(session.get(Asset.class, "PMIX"), cropBytesToken);
-		Double miningPrice = asset.getMiningProMix() * pmixQuote.getPrice() + asset.getMiningFees();
+		FiatQuote usdtQuote = provideFiatQuote(cropBytesToken, session.get(Currency.class, "USDT"));
+		Double miningFees = asset.getMiningFees() * asset.getMiningRatio() / usdtQuote.getPrice();
+		Double miningPrice = asset.getMiningProMix() * pmixQuote.getPrice() + miningFees;
 		Double profit = assetQuote.getPrice() - miningPrice;
 		if (currency != null && !currency.getCode().equals(cropBytesToken.getCode())) {
 			FiatQuote quote = provideFiatQuote(cropBytesToken, currency);

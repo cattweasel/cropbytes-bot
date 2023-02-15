@@ -36,21 +36,25 @@ public class CheckBalance implements CallbackExecutor {
 
 	private static final Logger LOG = Logger.getLogger(CheckBalance.class);
 	
-	private static final String BASE_CALLBACK = "farms#CheckBalance";
+	@Override
+	public String getBaseCallback() {
+		return "farms#CheckBalance";
+	}
 	
 	@Override
-	public void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data) {
+	public void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data) {
 		if (data == null || "".equals(data)) {
 			FarmsCommand.createFarmSelector(session, bot, user, chatId, messageId,
-					"Please select the farm for calculation:", BASE_CALLBACK);
+					"Please select the farm for calculation:", getBaseCallback());
 		} else {
 			String[] parts = data.split("#");
 			if (parts.length == 1) {
 				EditMessageText message = new EditMessageText(chatId, messageId, "Please select the point of view for this calculation:");
 				InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
 				keyboard.addRow(
-						new InlineKeyboardButton("Market Price").callbackData(BASE_CALLBACK + "#" + data + "#market_price"),
-						new InlineKeyboardButton("Asset Amount").callbackData(BASE_CALLBACK + "#" + data + "#asset_amount"));
+						new InlineKeyboardButton("Market Price").callbackData(getBaseCallback() + "#" + data + "#market_price"),
+						new InlineKeyboardButton("Asset Amount").callbackData(getBaseCallback() + "#" + data + "#asset_amount"));
 				keyboard.addRow(new InlineKeyboardButton("<< Back to Farms").callbackData("/farms"));
 				message.replyMarkup(keyboard);
 				bot.execute(message);

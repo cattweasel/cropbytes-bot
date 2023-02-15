@@ -1,5 +1,7 @@
 package net.cattweasel.cropbytes.telegram.cmd.alerts;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -20,10 +22,14 @@ public class SetupAlert implements CallbackExecutor {
 
 	private static final Logger LOG = Logger.getLogger(SetupAlert.class);
 	
-	private static final String BASE_CALLBACK = "alerts#SetupAlert";
+	@Override
+	public String getBaseCallback() {
+		return "alerts#SetupAlert";
+	}
 	
 	@Override
-	public void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data) {
+	public void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data) {
 		if (data == null || "".equals(data.trim())) {
 			createSetupDialog(bot, chatId, messageId);
 		} else {
@@ -70,11 +76,11 @@ public class SetupAlert implements CallbackExecutor {
 		EditMessageText message = new EditMessageText(chatId, messageId, "Please select an asset pair to be observed:");
 		InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
 		keyboard.addRow(
-				new InlineKeyboardButton("All Currencies").callbackData(BASE_CALLBACK + "#ALL_CURRENCIES"),
-				new InlineKeyboardButton("Custom Currency").callbackData(BASE_CALLBACK + "#CUSTOM_CURRENCY"));
+				new InlineKeyboardButton("All Currencies").callbackData(getBaseCallback() + "#ALL_CURRENCIES"),
+				new InlineKeyboardButton("Custom Currency").callbackData(getBaseCallback() + "#CUSTOM_CURRENCY"));
 		keyboard.addRow(
-				new InlineKeyboardButton("All Assets").callbackData(BASE_CALLBACK + "#ALL_ASSETS"),
-				new InlineKeyboardButton("Custom Asset").callbackData(BASE_CALLBACK + "#CUSTOM_ASSET"));
+				new InlineKeyboardButton("All Assets").callbackData(getBaseCallback() + "#ALL_ASSETS"),
+				new InlineKeyboardButton("Custom Asset").callbackData(getBaseCallback() + "#CUSTOM_ASSET"));
 		keyboard.addRow(new InlineKeyboardButton("<< Back to Alerts").callbackData("/alerts"));
 		message.replyMarkup(keyboard);
 		bot.execute(message);
@@ -98,23 +104,23 @@ public class SetupAlert implements CallbackExecutor {
 				tempAsset2 = asset;
 			} else {
 				keyboard.addRow(
-						new InlineKeyboardButton(tempAsset1.getCode() + " / CBX").callbackData(BASE_CALLBACK + "#" + data + "#" + tempAsset1.getCode()),
-						new InlineKeyboardButton(tempAsset2.getCode() + " / CBX").callbackData(BASE_CALLBACK + "#" + data + "#" + tempAsset2.getCode()),
-						new InlineKeyboardButton(asset.getCode() + " / CBX").callbackData(BASE_CALLBACK + "#" + data + "#" + asset.getCode()));
+						new InlineKeyboardButton(tempAsset1.getCode() + " / CBX").callbackData(getBaseCallback() + "#" + data + "#" + tempAsset1.getCode()),
+						new InlineKeyboardButton(tempAsset2.getCode() + " / CBX").callbackData(getBaseCallback() + "#" + data + "#" + tempAsset2.getCode()),
+						new InlineKeyboardButton(asset.getCode() + " / CBX").callbackData(getBaseCallback() + "#" + data + "#" + asset.getCode()));
 				tempAsset1 = null;
 				tempAsset2 = null;
 			}
 		}
 		if (tempAsset1 != null) {
 			if (tempAsset2 == null) {
-				keyboard.addRow(new InlineKeyboardButton(tempAsset1.getCode() + " / CBX").callbackData(BASE_CALLBACK + "#" + data + "#" + tempAsset1.getCode()));
+				keyboard.addRow(new InlineKeyboardButton(tempAsset1.getCode() + " / CBX").callbackData(getBaseCallback() + "#" + data + "#" + tempAsset1.getCode()));
 			} else {
 				keyboard.addRow(
-						new InlineKeyboardButton(tempAsset1.getCode() + " / CBX").callbackData(BASE_CALLBACK + "#" + data + "#" + tempAsset1.getCode()),
-						new InlineKeyboardButton(tempAsset2.getCode() + " / CBX").callbackData(BASE_CALLBACK + "#" + data + "#" + tempAsset2.getCode()));
+						new InlineKeyboardButton(tempAsset1.getCode() + " / CBX").callbackData(getBaseCallback() + "#" + data + "#" + tempAsset1.getCode()),
+						new InlineKeyboardButton(tempAsset2.getCode() + " / CBX").callbackData(getBaseCallback() + "#" + data + "#" + tempAsset2.getCode()));
 			}
 		}
-		keyboard.addRow(new InlineKeyboardButton("<< Back to Alert Settings").callbackData(BASE_CALLBACK));
+		keyboard.addRow(new InlineKeyboardButton("<< Back to Alert Settings").callbackData(getBaseCallback()));
 		message.replyMarkup(keyboard);
 		bot.execute(message);
 	}
@@ -132,17 +138,17 @@ public class SetupAlert implements CallbackExecutor {
 			} else {
 				keyboard.addRow(
 						new InlineKeyboardButton(String.format("%s / %s", "CBX",
-								tempCurrency.getCode())).callbackData(BASE_CALLBACK + "#" + data + "#" + tempCurrency.getCode()),
+								tempCurrency.getCode())).callbackData(getBaseCallback() + "#" + data + "#" + tempCurrency.getCode()),
 						new InlineKeyboardButton(String.format("%s / %s", "CBX",
-								currency.getCode())).callbackData(BASE_CALLBACK + "#" + data + "#" + currency.getCode()));
+								currency.getCode())).callbackData(getBaseCallback() + "#" + data + "#" + currency.getCode()));
 				tempCurrency = null;
 			}
 		}
 		if (tempCurrency != null) {
 			keyboard.addRow(new InlineKeyboardButton(String.format("%s / %s", "CBX",
-					tempCurrency.getCode())).callbackData(BASE_CALLBACK + "#" + data + "#" + tempCurrency.getCode()));
+					tempCurrency.getCode())).callbackData(getBaseCallback() + "#" + data + "#" + tempCurrency.getCode()));
 		}
-		keyboard.addRow(new InlineKeyboardButton("<< Back to Alert Settings").callbackData(BASE_CALLBACK));
+		keyboard.addRow(new InlineKeyboardButton("<< Back to Alert Settings").callbackData(getBaseCallback()));
 		message.replyMarkup(keyboard);
 		bot.execute(message);
 	}
@@ -151,16 +157,16 @@ public class SetupAlert implements CallbackExecutor {
 		EditMessageText message = new EditMessageText(chatId, messageId, "Please select your desired change factor:");
 		InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
 		keyboard.addRow(
-				new InlineKeyboardButton("5%").callbackData(BASE_CALLBACK + "#" + data + "#5"),
-				new InlineKeyboardButton("10%").callbackData(BASE_CALLBACK + "#" + data + "#10"),
-				new InlineKeyboardButton("15%").callbackData(BASE_CALLBACK + "#" + data + "#15"),
-				new InlineKeyboardButton("20%").callbackData(BASE_CALLBACK + "#" + data + "#20"));
+				new InlineKeyboardButton("5%").callbackData(getBaseCallback() + "#" + data + "#5"),
+				new InlineKeyboardButton("10%").callbackData(getBaseCallback() + "#" + data + "#10"),
+				new InlineKeyboardButton("15%").callbackData(getBaseCallback() + "#" + data + "#15"),
+				new InlineKeyboardButton("20%").callbackData(getBaseCallback() + "#" + data + "#20"));
 		keyboard.addRow(
-				new InlineKeyboardButton("25%").callbackData(BASE_CALLBACK + "#" + data + "#25"),
-				new InlineKeyboardButton("30%").callbackData(BASE_CALLBACK + "#" + data + "#30"),
-				new InlineKeyboardButton("35%").callbackData(BASE_CALLBACK + "#" + data + "#35"),
-				new InlineKeyboardButton("40%").callbackData(BASE_CALLBACK + "#" + data + "#40"));
-		keyboard.addRow(new InlineKeyboardButton("<< Back to Alert Settings").callbackData(BASE_CALLBACK));
+				new InlineKeyboardButton("25%").callbackData(getBaseCallback() + "#" + data + "#25"),
+				new InlineKeyboardButton("30%").callbackData(getBaseCallback() + "#" + data + "#30"),
+				new InlineKeyboardButton("35%").callbackData(getBaseCallback() + "#" + data + "#35"),
+				new InlineKeyboardButton("40%").callbackData(getBaseCallback() + "#" + data + "#40"));
+		keyboard.addRow(new InlineKeyboardButton("<< Back to Alert Settings").callbackData(getBaseCallback()));
 		message.replyMarkup(keyboard);
 		bot.execute(message);
 	}

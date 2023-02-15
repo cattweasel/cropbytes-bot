@@ -1,6 +1,7 @@
 package net.cattweasel.cropbytes.telegram.cmd.farms;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -21,13 +22,17 @@ import net.cattweasel.cropbytes.telegram.cmd.FarmsCommand;
 
 public class ManageFarm implements CallbackExecutor {
 
-	private static final String BASE_CALLBACK = "farms#ManageFarm";
+	@Override
+	public String getBaseCallback() {
+		return "farms#ManageFarm";
+	}
 	
 	@Override
-	public void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data) {
+	public void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data) {
 		if (data == null || "".equals(data)) {
 			FarmsCommand.createFarmSelector(session, bot, user, chatId, messageId,
-					"Please select the farm to be managed:", BASE_CALLBACK);
+					"Please select the farm to be managed:", getBaseCallback());
 		} else {
 			String[] parts = data.split("#");
 			if (parts.length == 1) {

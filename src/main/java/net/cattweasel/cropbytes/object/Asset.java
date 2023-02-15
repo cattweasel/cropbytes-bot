@@ -47,6 +47,7 @@ public class Asset implements Serializable {
 	private Boolean mineable;
 	private Double miningProMix;
 	private Double miningFees;
+	private Double miningRatio;
 	private Double grazingFees;
 	private Double appetiteLevel;
 	
@@ -209,5 +210,14 @@ public class Asset implements Serializable {
 
 	public void setAppetiteLevel(Double appetiteLevel) {
 		this.appetiteLevel = appetiteLevel;
+	}
+
+	@Column(name = "mining_ratio", unique = false, nullable = true)
+	public Double getMiningRatio() {
+		return miningRatio;
+	}
+
+	public void setMiningRatio(Double miningRatio) {
+		this.miningRatio = miningRatio;
 	}
 }

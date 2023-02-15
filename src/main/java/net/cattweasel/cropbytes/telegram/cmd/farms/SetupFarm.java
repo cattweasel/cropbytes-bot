@@ -1,5 +1,7 @@
 package net.cattweasel.cropbytes.telegram.cmd.farms;
 
+import java.util.Map;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -15,7 +17,13 @@ import net.cattweasel.cropbytes.telegram.User;
 public class SetupFarm implements CallbackExecutor {
 
 	@Override
-	public void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data) {
+	public String getBaseCallback() {
+		return "farms#SetupFarm";
+	}
+	
+	@Override
+	public void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data) {
 		Transaction tx = session.beginTransaction();
 		Farm farm = new Farm();
 		farm.setUser(user);

@@ -1,6 +1,7 @@
 package net.cattweasel.cropbytes.telegram.cmd.alerts;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -17,10 +18,14 @@ import net.cattweasel.cropbytes.telegram.User;
 
 public class RemoveAlert implements CallbackExecutor {
 	
-	private static final String BASE_CALLBACK = "alerts#RemoveAlert";
+	@Override
+	public String getBaseCallback() {
+		return "alerts#RemoveAlert";
+	}
 
 	@Override
-	public void execute(Session session, TelegramBot bot, User user, Long chatId, Integer messageId, String data) {
+	public void execute(Session session, TelegramBot bot, Map<Long, CallbackExecutor> callbackCache,
+			User user, Long chatId, Integer messageId, String data) {
 		if (data == null || "".equals(data.trim())) {
 			createRemoveDialog(session, bot, user, chatId, messageId);
 		} else {
@@ -50,13 +55,13 @@ public class RemoveAlert implements CallbackExecutor {
 					tempName = name;
 				} else {
 					keyboard.addRow(
-							new InlineKeyboardButton(tempName).callbackData(BASE_CALLBACK + "#" + tempAlert.getId()),
-							new InlineKeyboardButton(name).callbackData(BASE_CALLBACK + "#" + alert.getId()));
+							new InlineKeyboardButton(tempName).callbackData(getBaseCallback() + "#" + tempAlert.getId()),
+							new InlineKeyboardButton(name).callbackData(getBaseCallback() + "#" + alert.getId()));
 					tempAlert = null;
 				}
 			}
 			if (tempAlert != null) {
-				keyboard.addRow(new InlineKeyboardButton(tempName).callbackData(BASE_CALLBACK + "#" + tempAlert.getId()));
+				keyboard.addRow(new InlineKeyboardButton(tempName).callbackData(getBaseCallback() + "#" + tempAlert.getId()));
 			}
 			keyboard.addRow(new InlineKeyboardButton("<< Back to Alerts").callbackData("/alerts"));
 			message.replyMarkup(keyboard);
@@ -69,7 +74,7 @@ public class RemoveAlert implements CallbackExecutor {
 		InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
 		keyboard.addRow(
 				new InlineKeyboardButton("<< Back to Alerts").callbackData("/alerts"),
-				new InlineKeyboardButton("YES").callbackData(BASE_CALLBACK + "#" + alert.getId() + "#CONFIRM"));
+				new InlineKeyboardButton("YES").callbackData(getBaseCallback() + "#" + alert.getId() + "#CONFIRM"));
 		message.replyMarkup(keyboard);
 		bot.execute(message);
 	}
